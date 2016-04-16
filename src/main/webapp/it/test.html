@@ -81,9 +81,15 @@
     FB.api('/me?fields=name,gender,email,location,picture', function(response) {
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+        'Thanks for logging in, ' + response.name + '! (<a onclick="logout()">logout</a>)';
       alert(JSON.stringify(response));
     });
+  }
+  
+  function logout() {
+	  FB.logout(function(response) {
+		    statusChangeCallback(response);
+	  });
   }
 </script>
 
