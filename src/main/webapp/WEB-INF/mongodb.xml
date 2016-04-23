@@ -7,11 +7,11 @@
           http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd">
-          
-    <context:property-placeholder />
 
-	<mongo:mongo host="${OPENSHIFT_MONGODB_DB_HOST}" port="${OPENSHIFT_MONGODB_DB_PORT}" />
-	<mongo:db-factory dbname="dev" mongo-ref="mongo" username="${OPENSHIFT_MONGODB_DB_USERNAME}" password="${OPENSHIFT_MONGODB_DB_PASSWORD}"/>
+	<context:property-placeholder />
+
+	<mongo:db-factory
+		uri="mongodb://${OPENSHIFT_MONGODB_DB_USERNAME}:${OPENSHIFT_MONGODB_DB_PASSWORD}@${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/dev" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
