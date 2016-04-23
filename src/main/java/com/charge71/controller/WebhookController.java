@@ -54,11 +54,13 @@ public class WebhookController {
 		log.info(token);
 		log.info(json);
 		String command = null;
-		for (JsonNode entity : json.get("message").get("entities")) {
-			if (entity.get("type").asText().equals("bot_command")) {
-				int offset = entity.get("offset").asInt();
-				int length = entity.get("length").asInt();
-				command = json.get("message").get("text").asText().substring(offset, offset + length);
+		if (json.get("message").get("entities") != null) {
+			for (JsonNode entity : json.get("message").get("entities")) {
+				if (entity.get("type").asText().equals("bot_command")) {
+					int offset = entity.get("offset").asInt();
+					int length = entity.get("length").asInt();
+					command = json.get("message").get("text").asText().substring(offset, offset + length);
+				}
 			}
 		}
 		if (command == null) {
@@ -66,8 +68,12 @@ public class WebhookController {
 				command = "location";
 			}
 		}
-		log.info(command);
-		botDispatcher.exec(token, command, json);
+		if (command != null) {
+			log.info(command);
+			botDispatcher.exec(token, command, json);
+		} else {
+			log.info("No command found");
+		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
