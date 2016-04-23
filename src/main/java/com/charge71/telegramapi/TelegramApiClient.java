@@ -22,4 +22,10 @@ public class TelegramApiClient {
 				.queryParam("chat_id", chatId).queryParam("text", text);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
+
+	public ObjectNode getUserProfilePhoto(String userId) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/getUserProfilePhotos")
+				.queryParam("user_id", userId).queryParam("limit", 1);
+		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+	}
 }

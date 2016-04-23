@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
@@ -14,6 +16,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class BotDispatcher {
 
 	private static Logger log = Logger.getLogger(BotDispatcher.class);
+
+	@Autowired
+	private AutowireCapableBeanFactory beanFactory;
 
 	private List<String> botClasses;
 
@@ -44,6 +49,7 @@ public class BotDispatcher {
 				if (bot instanceof TelegramApiAware) {
 					((TelegramApiAware) bot).setClient(new TelegramApiClient(token));
 				}
+				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
 
 			} catch (Exception e) {
