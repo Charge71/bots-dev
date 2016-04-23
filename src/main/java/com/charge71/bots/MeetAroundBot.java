@@ -60,4 +60,11 @@ public class MeetAroundBot extends TelegramApiAware {
 		log.debug("/help end");
 	}
 
+	@BotCommand("/meet")
+	public void meet(ObjectNode json) {
+		log.debug("/meet start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		client.sendLocationRequest(chatId, "Please check in to meet people around you.");
+		log.debug("/meet end");
+	}
 }
