@@ -69,7 +69,7 @@ public class WebhookController {
 			}
 		}
 		if (command != null) {
-			log.info(command);
+			log.info("Command: " + command);
 			botDispatcher.exec(token, command, json);
 		} else {
 			log.info("No command found");

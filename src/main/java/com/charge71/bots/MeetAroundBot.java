@@ -1,9 +1,13 @@
 package com.charge71.bots;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
+import com.charge71.model.MeetLocation;
 import com.charge71.model.MeetUser;
 import com.charge71.telegramapi.TelegramApiAware;
 import com.charge71.telegramapi.annotations.BotCommand;
@@ -72,6 +76,16 @@ public class MeetAroundBot extends TelegramApiAware {
 	@BotCommand("location")
 	public void location(ObjectNode json) {
 		log.debug("location start");
+		String id = json.get("message").get("from").get("id").asText();
+		// String chatId = json.get("message").get("chat").get("id").asText();
+		double latitude = json.get("message").get("location").get("latitude").asDouble();
+		double longitude = json.get("message").get("location").get("longitude").asDouble();
+		Date date = new Date(Long.parseLong(json.get("message").get("date").asText() + "000"));
+		MeetLocation location = new MeetLocation();
+		location.setId(id);
+		location.setCreated(date);
+		location.setLocation(new GeoJsonPoint(longitude, latitude));
+		mongoTemplate.save(location);
 		log.debug("location end");
 	}
 }
