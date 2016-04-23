@@ -1,5 +1,6 @@
 package com.charge71.telegramapi;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class BotDispatcher {
 	private Map<String, Object> bots = new HashMap<String, Object>();
 	private Map<String, Map<String, Method>> methods = new HashMap<String, Map<String, Method>>();
 
-	public void init() {
+	public void init() throws IOException {
 
 		for (String botClass : botClasses) {
 			try {
