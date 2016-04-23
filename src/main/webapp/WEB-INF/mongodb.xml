@@ -11,12 +11,7 @@
     <context:property-placeholder />
 
 	<mongo:mongo host="${OPENSHIFT_MONGODB_DB_HOST}" port="${OPENSHIFT_MONGODB_DB_PORT}" />
-	<mongo:db-factory dbname="dev" mongo-ref="mongo"/>
-
-	<bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
-		<constructor-arg name="username" value="${OPENSHIFT_MONGODB_DB_USERNAME}" />
-		<constructor-arg name="password" value="${OPENSHIFT_MONGODB_DB_PASSWORD}" />
-	</bean>
+	<mongo:db-factory dbname="dev" mongo-ref="mongo" username="${OPENSHIFT_MONGODB_DB_USERNAME}" password="${OPENSHIFT_MONGODB_DB_PASSWORD}"/>
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
