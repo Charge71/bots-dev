@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="botDispatcher" class="com.charge71.telegramapi.BotDispatcher"
+		init-method="init">
+		<property name="botClasses">
+			<list>
+				<value>com.charge71.bots.MeetAroundBot</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>
