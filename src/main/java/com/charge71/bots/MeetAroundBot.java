@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class MeetAroundBot extends TelegramApiAware {
 
 	private static Logger log = Logger.getLogger(MeetAroundBot.class);
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -25,28 +25,39 @@ public class MeetAroundBot extends TelegramApiAware {
 		String chatId = json.get("message").get("chat").get("id").asText();
 		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
 		String name = json.get("message").get("from").get("first_name").asText();
+		boolean newUser = true;
 		if (user == null) {
-			client.sendMessage(chatId, "Welcome " + name + "!");
 			user = new MeetUser();
 			user.setId(id);
 			log.debug("/start new user " + id);
 		} else {
-			client.sendMessage(chatId, "Welcome back " + name + "!");
+			newUser = false;
 			log.debug("/start old user " + id);
 		}
+		client.sendMessage(chatId, "Welcome " + (newUser ? "" : "back ") + name
+				+ "! This bot can help you meet people checking in around you using the same bot."
+				+ " Please note that your contact won't be given without your explicit consent. To start click /help for the list of commands.");
 		String last = json.get("message").get("from").get("last_name").asText();
 		ObjectNode photoJson = client.getUserProfilePhoto(id);
 		if (photoJson.get("result").get("total_count").asInt() > 0) {
 			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
 			user.setPhotoId(photoId);
 		} else {
-			//TODO
+			// TODO
 		}
 		user.setFirstName(name);
 		user.setLastName(last);
 		user.setChatId(chatId);
 		mongoTemplate.save(user);
 		log.debug("/start end");
+	}
+
+	@BotCommand("/help")
+	public void help(ObjectNode json) {
+		log.debug("/help start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		client.sendMessage(chatId, "Available commands:\n/meet to check in and meet people around.\n/stop to exit this bot.\n/help to show this help.");
+		log.debug("/help end");
 	}
 
 }
