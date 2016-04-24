@@ -89,6 +89,12 @@ public class MeetAroundBot extends TelegramApiAware {
 		log.debug("/meet end");
 	}
 
+	@BotCommand(value = "/connect", isPrefix = true)
+	public void connect(ObjectNode json) {
+		log.debug("/connect start");
+		log.debug("/connect end");
+	}
+
 	@BotCommand("location")
 	public void location(ObjectNode json) {
 		log.debug("location start");
@@ -127,9 +133,9 @@ public class MeetAroundBot extends TelegramApiAware {
 				if (photoJson.get("result").get("total_count").asInt() > 0) {
 					String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
 					String caption = user.getFirstName();
-					client.sendPhoto(chatId, photoId, caption + "\n/connect " + user.getId());
+					client.sendPhoto(chatId, photoId, caption + "\n/connect" + user.getId());
 				} else {
-					client.sendMessage(chatId, user.getFirstName() + "\n/connect " + user.getId());
+					client.sendMessage(chatId, user.getFirstName() + "\n/connect" + user.getId());
 				}
 			}
 		}

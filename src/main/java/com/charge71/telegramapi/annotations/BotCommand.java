@@ -10,5 +10,7 @@ import java.lang.annotation.Target;
 public @interface BotCommand {
 
 	String value();
+	
+	boolean isPrefix() default false;
 
 }

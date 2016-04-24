@@ -25,6 +25,7 @@ public class BotDispatcher {
 
 	private Map<String, Object> bots = new HashMap<String, Object>();
 	private Map<String, Map<String, Method>> methods = new HashMap<String, Map<String, Method>>();
+	private Map<String, Map<String, Method>> prefixMethods = new HashMap<String, Map<String, Method>>();
 
 	public void init() throws IOException {
 
@@ -39,12 +40,18 @@ public class BotDispatcher {
 				Object bot = cbot.newInstance();
 				bots.put(token, bot);
 				Map<String, Method> commands = new HashMap<String, Method>();
+				Map<String, Method> prefixCommands = new HashMap<String, Method>();
 				methods.put(token, commands);
+				prefixMethods.put(token, prefixCommands);
 				Method[] ma = cbot.getMethods();
 				for (Method m : ma) {
 					BotCommand bc = m.getAnnotation(BotCommand.class);
 					if (bc != null) {
-						commands.put(bc.value(), m);
+						if (bc.isPrefix()) {
+							commands.put(bc.value(), m);
+						} else {
+							prefixCommands.put(bc.value(), m);
+						}
 					}
 				}
 				if (bot instanceof TelegramApiAware) {
@@ -69,8 +76,15 @@ public class BotDispatcher {
 		}
 		Method method = methods.get(token).get(command);
 		if (method == null) {
-			log.warn("Not found command " + command + " for bot " + bot);
-			return;
+			for (String prefixCommand : methods.get(token).keySet()) {
+				if (command.startsWith(prefixCommand)) {
+					method = methods.get(token).get(prefixCommand);
+				}
+			}
+			if (method == null) {
+				log.warn("Not found command " + command + " for bot " + bot);
+				return;
+			}
 		}
 		try {
 			method.invoke(bot, json);
