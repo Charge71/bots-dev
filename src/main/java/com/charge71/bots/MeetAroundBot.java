@@ -27,7 +27,7 @@ public class MeetAroundBot extends TelegramApiAware {
 	private MongoTemplate mongoTemplate;
 
 	@BotCommand("/start")
-	public void start(ObjectNode json) {
+	public void start(ObjectNode json, String command) {
 		log.debug("/start start");
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
@@ -60,7 +60,7 @@ public class MeetAroundBot extends TelegramApiAware {
 	}
 
 	@BotCommand("/help")
-	public void help(ObjectNode json) {
+	public void help(ObjectNode json, String command) {
 		log.debug("/help start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		client.sendMessage(chatId,
@@ -69,7 +69,7 @@ public class MeetAroundBot extends TelegramApiAware {
 	}
 
 	@BotCommand("/meet")
-	public void meet(ObjectNode json) {
+	public void meet(ObjectNode json, String command) {
 		log.debug("/meet start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {
@@ -82,13 +82,29 @@ public class MeetAroundBot extends TelegramApiAware {
 	}
 
 	@BotCommand(value = "/connect", isPrefix = true)
-	public void connect(ObjectNode json) {
+	public void connect(ObjectNode json, String command) {
 		log.debug("/connect start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		if (json.get("message").get("from").get("username") == null) {
+			client.sendMessage(chatId,
+					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
+			return;
+		}
+		String id = json.get("message").get("from").get("id").asText();
+		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
+		String connectToId = command.substring(8);
+		MeetUser connectToUser = mongoTemplate.findById(connectToId, MeetUser.class);
+		if (connectToId == null) {
+			// TODO
+		} else {
+			client.sendMessage(connectToUser.getChatId(), "@" + myself.getUsername() + " wish to connect with you!");
+			client.sendMessage(chatId, "A connection request has been sent to " + connectToUser.getFirstName());
+		}
 		log.debug("/connect end");
 	}
 
 	@BotCommand("location")
-	public void location(ObjectNode json) {
+	public void location(ObjectNode json, String command) {
 		log.debug("location start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {

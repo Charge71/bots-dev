@@ -88,7 +88,7 @@ public class BotDispatcher {
 			}
 		}
 		try {
-			method.invoke(bot, json);
+			method.invoke(bot, json, command);
 		} catch (Exception e) {
 			log.error("BotDispatcher error for command " + command, e);
 		}
