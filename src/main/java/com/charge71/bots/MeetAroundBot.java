@@ -81,6 +81,21 @@ public class MeetAroundBot extends TelegramApiAware {
 		log.debug("/meet end");
 	}
 
+	@BotCommand("/stop")
+	public void stop(ObjectNode json, String command) {
+		log.debug("/stop start");
+		String id = json.get("message").get("from").get("id").asText();
+		MeetLocation location = mongoTemplate.findById(id, MeetLocation.class);
+		if (location != null) {
+			mongoTemplate.remove(location);
+		}
+		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
+		if (user != null) {
+			mongoTemplate.remove(user);
+		}
+		log.debug("/stop end");
+	}
+
 	@BotCommand(value = "/connect", isPrefix = true)
 	public void connect(ObjectNode json, String command) {
 		log.debug("/connect start");
@@ -94,8 +109,8 @@ public class MeetAroundBot extends TelegramApiAware {
 		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 		String connectToId = command.substring(8);
 		MeetUser connectToUser = mongoTemplate.findById(connectToId, MeetUser.class);
-		if (connectToId == null) {
-			// TODO
+		if (connectToUser == null) {
+			client.sendMessage(chatId, "Sorry, the user cannot be found.");
 		} else {
 			client.sendMessage(connectToUser.getChatId(), "@" + myself.getUsername() + " wish to connect with you!");
 			client.sendMessage(chatId, "A connection request has been sent to " + connectToUser.getFirstName());
@@ -152,9 +167,10 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (photoJson.get("result").get("total_count").asInt() > 0) {
 			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
 			String caption = user.getFirstName();
-			client.sendPhoto(chatId, photoId, caption + "\nSend request: /connect" + user.getId());
+			client.sendPhoto(chatId, photoId, "*" + caption + "*\nTo send your contact click /connect" + user.getId());
 		} else {
-			client.sendMessage(chatId, user.getFirstName() + "\nSend request: /connect" + user.getId());
+			client.sendMessage(chatId,
+					"*" + user.getFirstName() + "*\nTo send your contact click /connect" + user.getId());
 		}
 	}
 }
