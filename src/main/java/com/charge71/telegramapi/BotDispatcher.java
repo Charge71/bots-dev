@@ -76,7 +76,7 @@ public class BotDispatcher {
 		}
 		Method method = methods.get(token).get(command);
 		if (method == null) {
-			for (String prefixCommand : methods.get(token).keySet()) {
+			for (String prefixCommand : prefixMethods.get(token).keySet()) {
 				if (command.startsWith(prefixCommand)) {
 					method = methods.get(token).get(prefixCommand);
 				}
