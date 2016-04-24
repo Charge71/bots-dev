@@ -49,7 +49,7 @@ public class MeetAroundBot extends TelegramApiAware {
 			user.setUsername(json.get("message").get("from").get("username").asText());
 			mongoTemplate.save(user);
 		} else {
-			message += "Please note that to use this bot you need to set a username in the Telegram settings.";
+			message += "Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.";
 		}
 		client.sendMessage(chatId, message);
 		// ObjectNode photoJson = client.getUserProfilePhoto(id);
@@ -76,6 +76,11 @@ public class MeetAroundBot extends TelegramApiAware {
 	public void meet(ObjectNode json) {
 		log.debug("/meet start");
 		String chatId = json.get("message").get("chat").get("id").asText();
+		if (json.get("message").get("from").get("username") == null) {
+			client.sendMessage(chatId,
+					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
+			return;
+		}
 		client.sendLocationRequest(chatId, "Please check in to meet people around you.");
 		log.debug("/meet end");
 	}
@@ -83,6 +88,12 @@ public class MeetAroundBot extends TelegramApiAware {
 	@BotCommand("location")
 	public void location(ObjectNode json) {
 		log.debug("location start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		if (json.get("message").get("from").get("username") == null) {
+			client.sendMessage(chatId,
+					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
+			return;
+		}
 		String id = json.get("message").get("from").get("id").asText();
 		// String chatId = json.get("message").get("chat").get("id").asText();
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
