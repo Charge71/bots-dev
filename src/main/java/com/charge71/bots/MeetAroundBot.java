@@ -38,21 +38,28 @@ public class MeetAroundBot extends TelegramApiAware {
 			newUser = false;
 			log.debug("/start old user " + id);
 		}
-		client.sendMessage(chatId, "Welcome " + (newUser ? "" : "back ") + name
-				+ "! This bot can help you meet people checking in around you using the same bot."
-				+ " Please note that your contact won't be given without your explicit consent. To start click /help for the list of commands.");
-		String last = json.get("message").get("from").get("last_name").asText();
-		ObjectNode photoJson = client.getUserProfilePhoto(id);
-		if (photoJson.get("result").get("total_count").asInt() > 0) {
-			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
-			user.setPhotoId(photoId);
+		boolean ok = json.get("message").get("from").get("username") == null;
+		String message = "Welcome " + (newUser ? "" : "back ") + name + "! ";
+		if (ok) {
+			message += "To start click /meet to check in or /help for the list of commands.";
+			String last = json.get("message").get("from").get("last_name").asText();
+			user.setFirstName(name);
+			user.setLastName(last);
+			user.setChatId(chatId);
+			user.setUsername(json.get("message").get("from").get("username").asText());
+			mongoTemplate.save(user);
 		} else {
-			// TODO
+			message += "Please note that to use this bot you need to set a username in the Telegram settings.";
 		}
-		user.setFirstName(name);
-		user.setLastName(last);
-		user.setChatId(chatId);
-		mongoTemplate.save(user);
+		client.sendMessage(chatId, message);
+		// ObjectNode photoJson = client.getUserProfilePhoto(id);
+		// if (photoJson.get("result").get("total_count").asInt() > 0) {
+		// String photoId =
+		// photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
+		// user.setPhotoId(photoId);
+		// } else {
+		// // TODO
+		// }
 		log.debug("/start end");
 	}
 

@@ -15,7 +15,7 @@ public class MeetUser {
 
 	private String chatId;
 	
-	private String photoId;
+	private String username;
 
 	public String getId() {
 		return id;
@@ -49,12 +49,12 @@ public class MeetUser {
 		this.chatId = chatId;
 	}
 
-	public String getPhotoId() {
-		return photoId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setPhotoId(String photoId) {
-		this.photoId = photoId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }
