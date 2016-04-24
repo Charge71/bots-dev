@@ -47,7 +47,7 @@ public class BotDispatcher {
 				for (Method m : ma) {
 					BotCommand bc = m.getAnnotation(BotCommand.class);
 					if (bc != null) {
-						if (bc.isPrefix()) {
+						if (!bc.isPrefix()) {
 							commands.put(bc.value(), m);
 						} else {
 							prefixCommands.put(bc.value(), m);
