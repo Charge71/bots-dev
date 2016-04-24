@@ -167,10 +167,9 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (photoJson.get("result").get("total_count").asInt() > 0) {
 			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
 			String caption = user.getFirstName();
-			client.sendPhoto(chatId, photoId, "*" + caption + "*\nTo send your contact click /connect" + user.getId());
+			client.sendPhoto(chatId, photoId, caption + "\nTo send your contact click /connect" + user.getId());
 		} else {
-			client.sendMessage(chatId,
-					"*" + user.getFirstName() + "*\nTo send your contact click /connect" + user.getId());
+			client.sendMessage(chatId, user.getFirstName() + "\nTo send your contact click /connect" + user.getId());
 		}
 	}
 }
