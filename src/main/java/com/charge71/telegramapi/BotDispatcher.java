@@ -79,7 +79,7 @@ public class BotDispatcher {
 		if (method == null) {
 			for (String prefixCommand : prefixMethods.get(token).keySet()) {
 				if (command.startsWith(prefixCommand)) {
-					method = methods.get(token).get(prefixCommand);
+					method = prefixMethods.get(token).get(prefixCommand);
 				}
 			}
 			if (method == null) {

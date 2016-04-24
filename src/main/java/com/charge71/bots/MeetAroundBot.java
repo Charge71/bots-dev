@@ -56,14 +56,6 @@ public class MeetAroundBot extends TelegramApiAware {
 			message += "Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.";
 		}
 		client.sendMessage(chatId, message);
-		// ObjectNode photoJson = client.getUserProfilePhoto(id);
-		// if (photoJson.get("result").get("total_count").asInt() > 0) {
-		// String photoId =
-		// photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
-		// user.setPhotoId(photoId);
-		// } else {
-		// // TODO
-		// }
 		log.debug("/start end");
 	}
 
@@ -105,7 +97,6 @@ public class MeetAroundBot extends TelegramApiAware {
 			return;
 		}
 		String id = json.get("message").get("from").get("id").asText();
-		// String chatId = json.get("message").get("chat").get("id").asText();
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
 		double longitude = json.get("message").get("location").get("longitude").asDouble();
 		Date date = new Date(Long.parseLong(json.get("message").get("date").asText() + "000"));
@@ -121,6 +112,7 @@ public class MeetAroundBot extends TelegramApiAware {
 			client.sendMessage(chatId,
 					"It seems no one checked in nearby lately. Why don't you share this bot to increase the chance to meet people?");
 		} else {
+			MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 			List<String> ids = new ArrayList<>(list.size());
 			for (MeetLocation meet : list) {
 				ids.add(meet.getId());
@@ -129,16 +121,24 @@ public class MeetAroundBot extends TelegramApiAware {
 			List<MeetUser> users = mongoTemplate.find(Query.query(criteria), MeetUser.class);
 			client.sendMessage(chatId, "These users checked in nearby lately:");
 			for (MeetUser user : users) {
-				ObjectNode photoJson = client.getUserProfilePhoto(user.getId());
-				if (photoJson.get("result").get("total_count").asInt() > 0) {
-					String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
-					String caption = user.getFirstName();
-					client.sendPhoto(chatId, photoId, caption + "\n/connect" + user.getId());
-				} else {
-					client.sendMessage(chatId, user.getFirstName() + "\n/connect" + user.getId());
-				}
+				sendConnection(chatId, user);
+				client.sendMessage(user.getChatId(), "Someone just checked in nearby!");
+				sendConnection(user.getChatId(), myself);
 			}
 		}
 		log.debug("location end");
+	}
+
+	//
+
+	private void sendConnection(String chatId, MeetUser user) {
+		ObjectNode photoJson = client.getUserProfilePhoto(user.getId());
+		if (photoJson.get("result").get("total_count").asInt() > 0) {
+			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
+			String caption = user.getFirstName();
+			client.sendPhoto(chatId, photoId, caption + "\nSend request: /connect" + user.getId());
+		} else {
+			client.sendMessage(chatId, user.getFirstName() + "\nSend request: /connect" + user.getId());
+		}
 	}
 }
