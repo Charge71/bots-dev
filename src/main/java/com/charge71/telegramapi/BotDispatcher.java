@@ -59,9 +59,8 @@ public class BotDispatcher {
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
-				log.debug("Commands: " + methods.keySet());
-				log.debug("Commands: " + prefixMethods.keySet());
-
+				log.debug("Commands: " + methods.get(token).keySet());
+				log.debug("Prefix commands: " + prefixMethods.get(token).keySet());
 			} catch (Exception e) {
 				log.error("BotDispatcher error for class " + botClass, e);
 			}
