@@ -1,11 +1,15 @@
 package com.charge71.bots;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.charge71.model.MeetLocation;
 import com.charge71.model.MeetUser;
@@ -99,11 +103,30 @@ public class MeetAroundBot extends TelegramApiAware {
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
 		double longitude = json.get("message").get("location").get("longitude").asDouble();
 		Date date = new Date(Long.parseLong(json.get("message").get("date").asText() + "000"));
+		GeoJsonPoint point = new GeoJsonPoint(longitude, latitude);
 		MeetLocation location = new MeetLocation();
 		location.setId(id);
 		location.setCreated(date);
 		location.setLocation(new GeoJsonPoint(longitude, latitude));
 		mongoTemplate.save(location);
+		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(100).and("id").ne(id);
+		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
+		if (list.isEmpty()) {
+			client.sendMessage(chatId,
+					"It seems no one checked in nearby lately. Why don't you share this bot to increase the chance to meet people?");
+		} else {
+			List<String> ids = new ArrayList<>(list.size());
+			for (MeetLocation meet : list) {
+				ids.add(meet.getId());
+			}
+			criteria = Criteria.where("id").in(ids);
+			List<MeetUser> users = mongoTemplate.find(Query.query(criteria), MeetUser.class);
+			String message = "These users checked in nearby lately:";
+			for (MeetUser user : users) {
+				message += "\n" + user.getFirstName();
+			}
+			client.sendMessage(chatId, message);
+		}
 		log.debug("location end");
 	}
 }
