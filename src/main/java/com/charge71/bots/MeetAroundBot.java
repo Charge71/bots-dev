@@ -38,7 +38,7 @@ public class MeetAroundBot extends TelegramApiAware {
 			newUser = false;
 			log.debug("/start old user " + id);
 		}
-		boolean ok = json.get("message").get("from").get("username") == null;
+		boolean ok = json.get("message").get("from").get("username") != null;
 		String message = "Welcome " + (newUser ? "" : "back ") + name + "! ";
 		if (ok) {
 			message += "To start click /meet to check in or /help for the list of commands.";
