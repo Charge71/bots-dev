@@ -121,11 +121,17 @@ public class MeetAroundBot extends TelegramApiAware {
 			}
 			criteria = Criteria.where("id").in(ids);
 			List<MeetUser> users = mongoTemplate.find(Query.query(criteria), MeetUser.class);
-			String message = "These users checked in nearby lately:";
+			client.sendMessage(chatId, "These users checked in nearby lately:");
 			for (MeetUser user : users) {
-				message += "\n" + user.getFirstName();
+				ObjectNode photoJson = client.getUserProfilePhoto(user.getId());
+				if (photoJson.get("result").get("total_count").asInt() > 0) {
+					String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
+					String caption = user.getFirstName();
+					client.sendPhoto(chatId, photoId, caption);
+				} else {
+					client.sendMessage(chatId, user.getFirstName());
+				}
 			}
-			client.sendMessage(chatId, message);
 		}
 		log.debug("location end");
 	}
