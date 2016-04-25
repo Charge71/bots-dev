@@ -62,14 +62,16 @@ public class MeetAroundBot extends TelegramApiAware {
 	public void settings(ObjectNode json, String command) {
 		log.debug("/settings start");
 		String chatId = json.get("message").get("chat").get("id").asText();
-		client.sendLanguageButtons(chatId, "Select your language");
+		client.sendLanguageButtons(chatId, "Select your language/Seleziona lingua");
 	}
 
 	@BotCommand("/help")
 	public void help(ObjectNode json, String command) {
 		log.debug("/help start");
+		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
-		client.sendMessage(chatId, "Available commands:\n/stop to exit this bot.\n/help to show this help.");
+		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
+		client.sendMessage(chatId, messages.getMessage(user.getLang(), "help"));
 	}
 
 	@BotCommand("/stop")
@@ -90,33 +92,33 @@ public class MeetAroundBot extends TelegramApiAware {
 	public void connect(ObjectNode json, String command) {
 		log.debug("/connect start");
 		String chatId = json.get("message").get("chat").get("id").asText();
-		if (json.get("message").get("from").get("username") == null) {
-			client.sendMessage(chatId,
-					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
-			return;
-		}
 		String id = json.get("message").get("from").get("id").asText();
 		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
+		if (json.get("message").get("from").get("username") == null) {
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nousername"));
+			return;
+		}
 		String connectToId = command.substring(8);
 		MeetUser connectToUser = mongoTemplate.findById(connectToId, MeetUser.class);
 		if (connectToUser == null) {
-			client.sendMessage(chatId, "Sorry, the user cannot be found.");
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nouser"));
 		} else {
-			client.sendMessage(connectToUser.getChatId(), "@" + myself.getUsername() + " wish to connect with you!");
-			client.sendMessage(chatId, "A connection request has been sent to " + connectToUser.getFirstName());
+			client.sendMessage(connectToUser.getChatId(),
+					messages.getMessage(connectToUser.getLang(), "whishes", "@" + myself.getUsername()));
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "request", connectToUser.getFirstName()));
 		}
 	}
 
 	@BotCommand("location")
 	public void location(ObjectNode json, String command) {
 		log.debug("location start");
+		String id = json.get("message").get("from").get("id").asText();
+		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {
-			client.sendMessage(chatId,
-					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nousername"));
 			return;
 		}
-		String id = json.get("message").get("from").get("id").asText();
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
 		double longitude = json.get("message").get("location").get("longitude").asDouble();
 		Date date = new Date(Long.parseLong(json.get("message").get("date").asText() + "000"));
@@ -129,21 +131,19 @@ public class MeetAroundBot extends TelegramApiAware {
 		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(100).and("id").ne(id);
 		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
 		if (list.isEmpty()) {
-			client.sendMessage(chatId,
-					"It seems no one checked in nearby lately. Why don't you share this bot to increase the chance to meet people?");
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nochecks"));
 		} else {
-			MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 			List<String> ids = new ArrayList<>(list.size());
 			for (MeetLocation meet : list) {
 				ids.add(meet.getId());
 			}
 			criteria = Criteria.where("id").in(ids);
 			List<MeetUser> users = mongoTemplate.find(Query.query(criteria), MeetUser.class);
-			client.sendMessage(chatId, "These users checked in nearby lately:");
+			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nearby"));
 			for (MeetUser user : users) {
-				sendConnection(chatId, user);
-				client.sendMessage(user.getChatId(), "Someone just checked in nearby!");
-				sendConnection(user.getChatId(), myself);
+				sendConnection(chatId, user, myself.getLang());
+				client.sendMessage(user.getChatId(), messages.getMessage(user.getLang(), "checked"));
+				sendConnection(user.getChatId(), myself, user.getLang());
 			}
 		}
 	}
@@ -157,24 +157,25 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (data.equals("lang_en")) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "en"),
 					MeetUser.class);
-			client.sendMessage(chatId, "Language switched to english.");
+			client.sendMessage(chatId, messages.getMessage("en", "lang"));
 		} else if (data.equals("lang_it")) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "it"),
 					MeetUser.class);
-			client.sendMessage(chatId, "Lingia cambiata in italiano.");
+			client.sendMessage(chatId, messages.getMessage("it", "lang"));
 		}
 	}
 
 	//
 
-	private void sendConnection(String chatId, MeetUser user) {
+	private void sendConnection(String chatId, MeetUser user, String lang) {
 		ObjectNode photoJson = client.getUserProfilePhoto(user.getId());
 		if (photoJson.get("result").get("total_count").asInt() > 0) {
 			String photoId = photoJson.get("result").get("photos").get(0).get(0).get("file_id").asText();
-			String caption = user.getFirstName();
-			client.sendPhoto(chatId, photoId, caption + "\nTo send your contact click /connect" + user.getId());
+			client.sendPhoto(chatId, photoId,
+					messages.getMessage(lang, "connect", user.getFirstName()) + " /connect" + user.getId());
 		} else {
-			client.sendMessage(chatId, user.getFirstName() + "\nTo send your contact click /connect" + user.getId());
+			client.sendMessage(chatId,
+					messages.getMessage(lang, "connect", user.getFirstName()) + " /connect" + user.getId());
 		}
 	}
 }
