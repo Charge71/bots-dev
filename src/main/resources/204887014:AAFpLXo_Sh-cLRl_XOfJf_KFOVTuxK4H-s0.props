@@ -11,6 +11,7 @@ en.nouser=Sorry, the user cannot be found.
 en.wishes={} wishes to connect with you!
 en.request=A connection request has been sent to {}
 en.help=Available commands:\n/stop to exit this bot.\n/settings to switch language\n/help to show this help.
+en.wait=Please wait 5 minutes before updating your location.
 
 it.welcome=Ciao {}!
 it.intro=Per iniziare invia la tua posizione. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua.
@@ -25,3 +26,4 @@ it.nouser=Utente non trovato.
 it.wishes={} desidera connettersi con te!
 it.request=Una richiesta di contatto è stata inviata a {}
 it.help=Comandi disponibili:\n/stop per uscire da questo bot.\n/settings per cambiare lingua\n/help per mostrare questo messaggio.
+it.wait=Aspetta 5 minuti prima di aggiornare la tua posizione.

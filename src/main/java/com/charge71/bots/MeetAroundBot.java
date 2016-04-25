@@ -119,6 +119,15 @@ public class MeetAroundBot extends TelegramApiAware {
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nousername"));
 			return;
 		}
+		MeetLocation oldloc = mongoTemplate.findById(id, MeetLocation.class);
+		if (oldloc != null) {
+			long oldtime = oldloc.getCreated().getTime();
+			long nowtime = System.currentTimeMillis();
+			if (nowtime < oldtime + 300000) { // 5 mins
+				client.sendMessage(chatId, messages.getMessage(myself.getLang(), "wait"));
+			}
+			return;
+		}
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
 		double longitude = json.get("message").get("location").get("longitude").asDouble();
 		Date date = new Date(Long.parseLong(json.get("message").get("date").asText() + "000"));
