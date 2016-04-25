@@ -148,6 +148,20 @@ public class MeetAroundBot extends TelegramApiAware {
 			}
 		}
 	}
+	
+	@BotCommand("callback")
+	public void callback(ObjectNode json, String command) {
+		log.debug("callback start");
+		String chatId = json.get("callback_query").get("message").get("chat").get("id").asText();
+		String data = json.get("callback_query").get("data").asText();
+		if (data.equals("lang_en")) {
+			//TODO
+			client.sendMessage(chatId, "Language switched to english.");
+		} else if (data.equals("lang_it")) {
+			//TODO
+			client.sendMessage(chatId, "Lingia cambiata in italiano.");
+		}
+	}
 
 	//
 

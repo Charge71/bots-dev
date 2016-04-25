@@ -66,6 +66,8 @@ public class WebhookController {
 		if (command == null) {
 			if (json.get("message").get("location") != null) {
 				command = "location";
+			} else if (json.get("callback_query") != null) {
+				command = "callback";
 			}
 		}
 		if (command != null) {
