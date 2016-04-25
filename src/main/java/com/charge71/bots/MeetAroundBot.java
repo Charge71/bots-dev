@@ -137,7 +137,7 @@ public class MeetAroundBot extends TelegramApiAware {
 		location.setCreated(date);
 		location.setLocation(new GeoJsonPoint(longitude, latitude));
 		mongoTemplate.save(location);
-		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(100).and("id").ne(id);
+		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200).and("id").ne(id);
 		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
 		if (list.isEmpty()) {
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nochecks"));
