@@ -28,10 +28,16 @@ public class TelegramApiClient {
 				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", locationRequest());
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
-	
+
 	public ObjectNode sendPhoto(String chatId, String fileId, String caption) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendPhoto")
 				.queryParam("chat_id", chatId).queryParam("photo", fileId).queryParam("caption", caption);
+		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+	}
+
+	public ObjectNode sendLanguageButtons(String chatId, String text) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
+				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", languageRequest());
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
@@ -44,6 +50,10 @@ public class TelegramApiClient {
 	//
 
 	private String locationRequest() {
-		return "{\"keyboard\":[[{\"text\":\"Check In\",\"request_location\":true}]],\"one_time_keyboard\":true}";
+		return "{\"keyboard\":[[{\"text\":\"Check In\",\"request_location\":true}]],\"resize_keyboard\":true}";
+	}
+
+	private String languageRequest() {
+		return "{\"inline_keyboard\":[[{\"text\":\"English\",\"callback_data\":\"lang_en\"},{\"text\":\"Italiano\",\"callback_data\":\"lang_it\"}]]}";
 	}
 }

@@ -45,40 +45,32 @@ public class MeetAroundBot extends TelegramApiAware {
 		boolean ok = json.get("message").get("from").get("username") != null;
 		String message = "Welcome " + (newUser ? "" : "back ") + name + "! ";
 		if (ok) {
-			message += "To start click /meet to check in or /help for the list of commands.";
+			message += "To start send your location. Please note that you agree to share your first name and profile picture.";
 			String last = json.get("message").get("from").get("last_name").asText();
 			user.setFirstName(name);
 			user.setLastName(last);
 			user.setChatId(chatId);
 			user.setUsername(json.get("message").get("from").get("username").asText());
 			mongoTemplate.save(user);
+			client.sendLocationRequest(chatId, message);
 		} else {
 			message += "Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.";
+			client.sendMessage(chatId, message);
 		}
-		client.sendMessage(chatId, message);
-		log.debug("/start end");
+	}
+
+	@BotCommand("/settings")
+	public void settings(ObjectNode json, String command) {
+		log.debug("/settings start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		client.sendLanguageButtons(chatId, "Select your language");
 	}
 
 	@BotCommand("/help")
 	public void help(ObjectNode json, String command) {
 		log.debug("/help start");
 		String chatId = json.get("message").get("chat").get("id").asText();
-		client.sendMessage(chatId,
-				"Available commands:\n/meet to check in and meet people around.\n/stop to exit this bot.\n/help to show this help.");
-		log.debug("/help end");
-	}
-
-	@BotCommand("/meet")
-	public void meet(ObjectNode json, String command) {
-		log.debug("/meet start");
-		String chatId = json.get("message").get("chat").get("id").asText();
-		if (json.get("message").get("from").get("username") == null) {
-			client.sendMessage(chatId,
-					"Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.");
-			return;
-		}
-		client.sendLocationRequest(chatId, "Please check in to meet people around you.");
-		log.debug("/meet end");
+		client.sendMessage(chatId, "Available commands:\n/stop to exit this bot.\n/help to show this help.");
 	}
 
 	@BotCommand("/stop")
@@ -93,7 +85,6 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (user != null) {
 			mongoTemplate.remove(user);
 		}
-		log.debug("/stop end");
 	}
 
 	@BotCommand(value = "/connect", isPrefix = true)
@@ -115,7 +106,6 @@ public class MeetAroundBot extends TelegramApiAware {
 			client.sendMessage(connectToUser.getChatId(), "@" + myself.getUsername() + " wish to connect with you!");
 			client.sendMessage(chatId, "A connection request has been sent to " + connectToUser.getFirstName());
 		}
-		log.debug("/connect end");
 	}
 
 	@BotCommand("location")
@@ -157,7 +147,6 @@ public class MeetAroundBot extends TelegramApiAware {
 				sendConnection(user.getChatId(), myself);
 			}
 		}
-		log.debug("location end");
 	}
 
 	//
