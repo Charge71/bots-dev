@@ -125,8 +125,8 @@ public class MeetAroundBot extends TelegramApiAware {
 			long nowtime = System.currentTimeMillis();
 			if (nowtime < oldtime + 300000) { // 5 mins
 				client.sendMessage(chatId, messages.getMessage(myself.getLang(), "wait"));
+				return;
 			}
-			return;
 		}
 		double latitude = json.get("message").get("location").get("latitude").asDouble();
 		double longitude = json.get("message").get("location").get("longitude").asDouble();

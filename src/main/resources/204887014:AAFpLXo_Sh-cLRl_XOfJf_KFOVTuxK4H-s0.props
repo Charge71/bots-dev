@@ -10,7 +10,7 @@ en.lang=Language switched to english.
 en.nouser=Sorry, the user cannot be found.
 en.wishes={} wishes to connect with you!
 en.request=A connection request has been sent to {}
-en.help=This bot can help you meet people checking in around you using the same bot.\n\nAvailable commands:\n\n/stop - exit this bot.\n/settings - switch language\n/help - show this help.\n\nShare bot on Facebook: https://goo.gl/71AkEz
+en.help=This bot can help you meet people checking in around you using the same bot.\n\nAvailable commands:\n\n/stop - exit this bot.\n/settings - switch language\n/help - show this help.\n\nShare bot on Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 en.wait=Please wait 5 minutes before updating your location.
 
 it.welcome=Ciao {}!
@@ -25,5 +25,5 @@ it.lang=Lingua cambiata in italiano.
 it.nouser=Utente non trovato.
 it.wishes={} desidera connettersi con te!
 it.request=Una richiesta di contatto è stata inviata a {}
-it.help=Questo bot può aiutarti a trovare persone che si registrano vicino a te con lo stesso bot.\n\nComandi disponibili:\n\n/stop - esci da questo bot.\n/settings - cambia lingua\n/help - mostra questo messaggio.\n\n Condividi questo bot su Facebook: https://goo.gl/71AkEz
+it.help=Questo bot può aiutarti a trovare persone che si registrano vicino a te con lo stesso bot.\n\nComandi disponibili:\n\n/stop - esci da questo bot.\n/settings - cambia lingua\n/help - mostra questo messaggio.\n\n Condividi questo bot su Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 it.wait=Per favore aspetta 5 minuti prima di aggiornare la tua posizione.
