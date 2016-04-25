@@ -1,5 +1,9 @@
 en.welcome=Welcome {}!
 en.intro=To start send your location. Please note that doing that you agree to share your first name and profile picture.
+en.sendloc=Send location
+en.nousername=Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.
 
 it.welcome=Ciao {}!
-it.intro=Per iniziare invia la tua posizione. Nota che fecendolo accetti di condivicere il tuo nome proprio e la tua immagine del profilo.
+it.intro=Per iniziare invia la tua posizione. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo.
+it.sendloc=Invio posizione
+it.nousername=Per usare questo bot è necessario configurare uno username nelle impostzioni. Quando hai fatto clicca /start.

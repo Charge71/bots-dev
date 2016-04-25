@@ -51,9 +51,9 @@ public class MeetAroundBot extends TelegramApiAware {
 			user.setChatId(chatId);
 			user.setUsername(json.get("message").get("from").get("username").asText());
 			mongoTemplate.save(user);
-			client.sendLocationRequest(chatId, message);
+			client.sendLocationRequest(chatId, message, messages.getMessage(user.getLang(), "sendloc"));
 		} else {
-			message += "Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.";
+			message += " " + messages.getMessage(user.getLang(), "nousername");
 			client.sendMessage(chatId, message);
 		}
 	}

@@ -23,9 +23,9 @@ public class TelegramApiClient {
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
-	public ObjectNode sendLocationRequest(String chatId, String text) {
+	public ObjectNode sendLocationRequest(String chatId, String text, String request) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
-				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", locationRequest());
+				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", locationRequest(request));
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
@@ -49,8 +49,8 @@ public class TelegramApiClient {
 
 	//
 
-	private String locationRequest() {
-		return "{\"keyboard\":[[{\"text\":\"Check In\",\"request_location\":true}]],\"resize_keyboard\":true}";
+	private String locationRequest(String request) {
+		return "{\"keyboard\":[[{\"text\":\"" + request + "\",\"request_location\":true}]],\"resize_keyboard\":true}";
 	}
 
 	private String languageRequest() {
