@@ -16,6 +16,16 @@ public class MeetUser {
 	private String chatId;
 	
 	private String username;
+	
+	private String lang = "en";
+
+	public String getLang() {
+		return lang;
+	}
+
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
 
 	public String getId() {
 		return id;

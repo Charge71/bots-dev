@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.charge71.model.MeetLocation;
 import com.charge71.model.MeetUser;
@@ -148,17 +149,20 @@ public class MeetAroundBot extends TelegramApiAware {
 			}
 		}
 	}
-	
+
 	@BotCommand("callback")
 	public void callback(ObjectNode json, String command) {
 		log.debug("callback start");
 		String chatId = json.get("callback_query").get("message").get("chat").get("id").asText();
+		String fromId = json.get("callback_query").get("from").get("id").asText();
 		String data = json.get("callback_query").get("data").asText();
 		if (data.equals("lang_en")) {
-			//TODO
+			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "en"),
+					MeetUser.class);
 			client.sendMessage(chatId, "Language switched to english.");
 		} else if (data.equals("lang_it")) {
-			//TODO
+			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "it"),
+					MeetUser.class);
 			client.sendMessage(chatId, "Lingia cambiata in italiano.");
 		}
 	}
