@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import com.charge71.lang.MessageHelper;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -56,6 +57,7 @@ public class BotDispatcher {
 				}
 				if (bot instanceof TelegramApiAware) {
 					((TelegramApiAware) bot).setClient(new TelegramApiClient(token));
+					((TelegramApiAware) bot).setMessages(new MessageHelper(token));
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);

@@ -44,7 +44,7 @@ public class MeetAroundBot extends TelegramApiAware {
 			log.debug("/start old user " + id);
 		}
 		boolean ok = json.get("message").get("from").get("username") != null;
-		String message = "Welcome " + (newUser ? "" : "back ") + name + "! ";
+		String message = messages.getMessage(user.getLang(), "welcome", name);
 		if (ok) {
 			message += "To start send your location. Please note that you agree to share your first name and profile picture.";
 			String last = json.get("message").get("from").get("last_name").asText();
