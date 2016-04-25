@@ -166,11 +166,11 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (data.equals("lang_en")) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "en"),
 					MeetUser.class);
-			client.sendMessage(chatId, messages.getMessage("en", "lang"));
+			client.sendLocationRequest(chatId, messages.getMessage("en", "lang"), messages.getMessage("en", "sendloc"));
 		} else if (data.equals("lang_it")) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "it"),
 					MeetUser.class);
-			client.sendMessage(chatId, messages.getMessage("it", "lang"));
+			client.sendLocationRequest(chatId, messages.getMessage("it", "lang"), messages.getMessage("it", "sendloc"));
 		}
 	}
 
