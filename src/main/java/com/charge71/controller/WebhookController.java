@@ -54,7 +54,7 @@ public class WebhookController {
 		log.info(token);
 		log.info(json);
 		String command = null;
-		if (json.get("message").get("entities") != null) {
+		if (json.get("message") != null && json.get("message").get("entities") != null) {
 			for (JsonNode entity : json.get("message").get("entities")) {
 				if (entity.get("type").asText().equals("bot_command")) {
 					int offset = entity.get("offset").asInt();
@@ -64,7 +64,7 @@ public class WebhookController {
 			}
 		}
 		if (command == null) {
-			if (json.get("message").get("location") != null) {
+			if (json.get("message") != null && json.get("message").get("location") != null) {
 				command = "location";
 			} else if (json.get("callback_query") != null) {
 				command = "callback";
