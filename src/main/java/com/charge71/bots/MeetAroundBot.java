@@ -104,7 +104,7 @@ public class MeetAroundBot extends TelegramApiAware {
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nouser"));
 		} else {
 			client.sendMessage(connectToUser.getChatId(),
-					messages.getMessage(connectToUser.getLang(), "whishes", "@" + myself.getUsername()));
+					messages.getMessage(connectToUser.getLang(), "wishes", "@" + myself.getUsername()));
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "request", connectToUser.getFirstName()));
 		}
 	}
