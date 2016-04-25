@@ -2,6 +2,7 @@ package com.charge71.lang;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,7 @@ public class MessageHelper {
 
 	public MessageHelper(String token) throws IOException {
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(token + ".props");
-		props.load(in);
+		props.load(new InputStreamReader(in, "UTF-8"));
 	}
 
 	public String getMessage(String lang, String label, String... args) {

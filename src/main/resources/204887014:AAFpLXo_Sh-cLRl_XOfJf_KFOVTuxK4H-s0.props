@@ -1,5 +1,5 @@
 en.welcome=Welcome {}!
-en.intro=To start send your location. Please note that doing that you agree to share your first name and profile picture.
+en.intro=To start send your location. Please note that doing that you agree to share your first name and profile picture. Click /settings to change language.
 en.sendloc=Send location
 en.nousername=Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.
 en.nochecks=It seems no one checked in nearby lately. Why don't you share this bot to increase the chance to meet people?
@@ -13,7 +13,7 @@ en.request=A connection request has been sent to {}
 en.help=Available commands:\n/stop to exit this bot.\n/settings to switch language\n/help to show this help.
 
 it.welcome=Ciao {}!
-it.intro=Per iniziare invia la tua posizione. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo.
+it.intro=Per iniziare invia la tua posizione. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua.
 it.sendloc=Invio posizione
 it.nousername=Per usare questo bot è necessario configurare uno username nelle impostzioni. Quando hai fatto clicca /start.
 it.nochecks=Sembra non ci sia nessuno nelle vicinanze. Perché non condividi questo bot per aumentare le probabilità di incontrare persone?
