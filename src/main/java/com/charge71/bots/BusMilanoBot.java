@@ -59,11 +59,12 @@ public class BusMilanoBot extends TelegramApiAware {
 	}
 
 	private List<String> getResponseMessage(ObjectNode json) {
-		List<String> result = new ArrayList<>(json.get("Lines").size());
+		List<String> result = new ArrayList<>(json.get("Lines").size() + 1);
+		result.add("*Fermata " + json.get("Description") + "*");
 		for (JsonNode line : json.get("Lines")) {
 			String lineCode = line.get("Line").get("LineCode").asText();
 			String lineDescription = line.get("Line").get("LineDescription").asText();
-			String waitMessage = line.get("WaitMessage").asText();
+			String waitMessage = line.get("WaitMessage").isNull() ? "-" : line.get("WaitMessage").asText();
 			result.add("*Linea " + lineCode + "* - " + lineDescription + "\nAttesa: " + waitMessage);
 		}
 		return result;
