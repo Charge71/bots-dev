@@ -32,7 +32,7 @@ public class BusMilanoBot extends TelegramApiAware {
 
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
-		log.debug("/start start");
+		log.debug("default start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String text = json.get("message").get("text").asText();
 		try {
@@ -40,7 +40,7 @@ public class BusMilanoBot extends TelegramApiAware {
 			ObjectNode response = getInfo(text);
 			List<String> list = getResponseMessage(response);
 			for (String message : list) {
-				client.sendMessage(chatId, message);
+				client.sendMarkdownMessage(chatId, message);
 			}
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId, "Il codice inserito non è corretto.");
