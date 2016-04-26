@@ -74,7 +74,8 @@ public class WebhookController {
 			log.info("Command: " + command);
 			botDispatcher.exec(token, command, json);
 		} else {
-			log.info("No command found");
+			log.info("Default command");
+			botDispatcher.exec(token, "default", json);
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}

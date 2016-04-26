@@ -85,11 +85,8 @@ public class BotDispatcher {
 				}
 			}
 			if (method == null) {
-				method = methods.get(token).get("default");
-				if (method == null) {
-					log.warn("Not found command " + command + " for bot " + bot);
-					return;
-				}
+				log.warn("Not found command " + command + " for bot " + bot);
+				return;
 			}
 		}
 		try {
