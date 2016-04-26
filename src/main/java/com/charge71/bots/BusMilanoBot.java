@@ -30,6 +30,14 @@ public class BusMilanoBot extends TelegramApiAware {
 				+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
 	}
 
+	@BotCommand("/help")
+	public void help(ObjectNode json, String command) {
+		log.debug("/start start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		client.sendMessage(chatId,
+				"Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
+	}
+
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
@@ -66,7 +74,8 @@ public class BusMilanoBot extends TelegramApiAware {
 			String lineDescription = line.get("Line").get("LineDescription").asText();
 			String waitMessage = line.get("WaitMessage").isNull() ? "-" : line.get("WaitMessage").asText();
 			String bookletUrl = line.get("BookletUrl").asText();
-			result.add("Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari](" + bookletUrl + "))");
+			result.add("Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
+					+ bookletUrl + "))");
 		}
 		return result;
 	}
