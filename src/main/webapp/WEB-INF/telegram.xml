@@ -8,6 +8,7 @@
 		<property name="botClasses">
 			<list>
 				<value>com.charge71.bots.MeetAroundBot</value>
+				<value>com.charge71.bots.BusMilanoBot</value>
 			</list>
 		</property>
 	</bean>
