@@ -22,16 +22,18 @@ public class TelegramApiClient {
 				.queryParam("chat_id", chatId).queryParam("text", text);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
-	
+
 	public ObjectNode sendMarkdownMessage(String chatId, String text) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
-				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("parse_mode", "Markdown");
+				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("parse_mode", "Markdown")
+				.queryParam("disable_web_page_preview", true);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
 	public ObjectNode sendLocationRequest(String chatId, String text, String request) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
-				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", locationRequest(request));
+				.queryParam("chat_id", chatId).queryParam("text", text)
+				.queryParam("reply_markup", locationRequest(request));
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
