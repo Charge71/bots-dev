@@ -54,7 +54,7 @@ public class BusMilanoBot extends TelegramApiAware {
 
 	private ObjectNode getInfo(String code) {
 		UriComponentsBuilder builder = UriComponentsBuilder
-				.fromHttpUrl("http://giromilano.atm.it/TPPortalBackEnd/tpl/stops/").path(code);
+				.fromHttpUrl("http://giromilano.atm.it/TPPortalBackEnd/tpl/stops/").path(code).path("/linesummary");
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
