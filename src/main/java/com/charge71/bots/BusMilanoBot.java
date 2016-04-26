@@ -65,7 +65,8 @@ public class BusMilanoBot extends TelegramApiAware {
 			String lineCode = line.get("Line").get("LineCode").asText();
 			String lineDescription = line.get("Line").get("LineDescription").asText();
 			String waitMessage = line.get("WaitMessage").isNull() ? "-" : line.get("WaitMessage").asText();
-			result.add("*Linea " + lineCode + "* - " + lineDescription + "\nAttesa: " + waitMessage);
+			String bookletUrl = line.get("BookletUrl").asText();
+			result.add("Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " [orari](" + bookletUrl + ")");
 		}
 		return result;
 	}
