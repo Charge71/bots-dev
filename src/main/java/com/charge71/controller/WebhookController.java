@@ -2,6 +2,7 @@ package com.charge71.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -27,12 +28,12 @@ public class WebhookController {
 	@Autowired
 	private BotDispatcher botDispatcher;
 
-	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.txt");
+	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.props");
 
 	public WebhookController() {
 		if (!updateFile.exists()) {
 			try {
-				FileUtils.write(updateFile, "0");
+				FileUtils.touch(updateFile);
 			} catch (IOException e) {
 				log.error("Cannot create update file", e);
 			}
@@ -47,7 +48,7 @@ public class WebhookController {
 	@RequestMapping(value = "/webhook/{token}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> webhook(@PathVariable("token") String token, @RequestBody ObjectNode json) {
 		long updateId = json.get("update_id").asLong();
-		if (!newUpdate(updateId)) {
+		if (!newUpdate(updateId, token)) {
 			log.debug("Skipped old update " + updateId);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		}
@@ -82,11 +83,14 @@ public class WebhookController {
 
 	//
 
-	private synchronized boolean newUpdate(long updateId) {
+	private synchronized boolean newUpdate(long updateId, String token) {
+		Properties props = new Properties();
 		try {
-			long oldUpdate = Long.parseLong(FileUtils.readFileToString(updateFile));
+			props.load(FileUtils.openInputStream(updateFile));
+			long oldUpdate = Long.parseLong(props.getProperty(token, "0"));
 			if (updateId > oldUpdate) {
-				FileUtils.write(updateFile, String.valueOf(updateId));
+				props.setProperty(token, String.valueOf(updateId));
+				props.store(FileUtils.openOutputStream(updateFile), "");
 				return true;
 			}
 			return false;
