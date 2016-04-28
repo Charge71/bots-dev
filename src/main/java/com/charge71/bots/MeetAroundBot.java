@@ -45,9 +45,11 @@ public class MeetAroundBot extends TelegramApiAware {
 		String message = messages.getMessage(user.getLang(), "welcome", name);
 		if (ok) {
 			message += " " + messages.getMessage(user.getLang(), "intro");
-			String last = json.get("message").get("from").get("last_name").asText();
+			if (json.get("message").get("from").get("last_name") != null) {
+				String last = json.get("message").get("from").get("last_name").asText();
+				user.setLastName(last);
+			}
 			user.setFirstName(name);
-			user.setLastName(last);
 			user.setChatId(chatId);
 			user.setUsername(json.get("message").get("from").get("username").asText());
 			mongoTemplate.save(user);
