@@ -155,6 +155,7 @@ public class MeetAroundBot extends TelegramApiAware {
 				sendConnection(chatId, user, myself.getLang());
 				client.sendMessage(user.getChatId(), messages.getMessage(user.getLang(), "checked"));
 				sendConnection(user.getChatId(), myself, user.getLang());
+				log.info("**** HIT " + myself.getId() + " - " + user.getId());
 			}
 		}
 	}
@@ -184,7 +185,7 @@ public class MeetAroundBot extends TelegramApiAware {
 		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
 		client.sendMessage(chatId, messages.getMessage(user.getLang(), "unknown"));
 	}
-	
+
 	//
 
 	private void sendConnection(String chatId, MeetUser user, String lang) {
