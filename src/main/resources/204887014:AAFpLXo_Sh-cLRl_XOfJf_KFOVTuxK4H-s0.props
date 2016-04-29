@@ -1,8 +1,8 @@
 en.welcome=Welcome {}!
-en.intro=To start send your location. Please note that doing that you agree to share your first name and profile picture. Click /settings to change language.
+en.intro=To start send your location using the button below or the attachment function. Please note that doing that you agree to share your first name and profile picture. Click /settings to change language.
 en.sendloc=Send location
 en.nousername=Please note that to use this bot you need to set a username in the Telegram settings. When done click /start.
-en.nochecks=It seems no one checked in nearby lately. Why don't you share this bot to increase the chance to meet people?\n\nShare on Facebook: https://goo.gl/71AkEz
+en.nochecks=It seems no one checked in nearby lately. Remember that check in lasts for 15 minutes only, so retry often! Meanwhile, why don't you share this bot to increase the chance to meet people?\n\nShare on Facebook: https://goo.gl/71AkEz
 en.nearby=These users checked in nearby lately:
 en.checked=Someone just checked in nearby!
 en.connect=To send a connect request to {} click
@@ -15,10 +15,10 @@ en.wait=Please wait 5 minutes before updating your location.
 en.unknown=Unknown command.
 
 it.welcome=Ciao {}!
-it.intro=Per iniziare invia la tua posizione. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua.
+it.intro=Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua.
 it.sendloc=Invia posizione
 it.nousername=Per usare questo bot è necessario configurare uno username nelle impostzioni. Quando hai fatto clicca /start.
-it.nochecks=Sembra non ci sia nessuno nelle vicinanze. Perché non condividi questo bot per aumentare le probabilità di incontrare persone?\n\nCondividi su Facebook: https://goo.gl/71AkEz
+it.nochecks=Sembra non ci sia nessuno nelle vicinanze. Ricorda che la registrazione dura solo 15 minuti quindi riprova spesso! Nel frattempo perché non condividi questo bot per aumentare le probabilità di incontrare persone?\n\nCondividi su Facebook: https://goo.gl/71AkEz
 it.nearby=Questi utenti sono nelle vicinanze:
 it.checked=C'è qualcuno nelle vicinanze!
 it.connect=Per inviare una richiesta di contatto a {} clicca
