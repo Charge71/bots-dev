@@ -32,6 +32,8 @@ public class WebhookController {
 
 	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.props");
 
+	private File logFile = new File(System.getProperty("OPENSHIFT_LOG_DIR") + "/jbossews.log");
+
 	public WebhookController() {
 		if (!updateFile.exists()) {
 			try {
@@ -85,8 +87,7 @@ public class WebhookController {
 
 	@RequestMapping(value = "/log", method = RequestMethod.GET)
 	public String log() throws IOException {
-		FileInputStream fis = FileUtils
-				.openInputStream(new File(System.getProperty("OPENSHIFT_LOG_DIR") + "/jbossews.log"));
+		FileInputStream fis = FileUtils.openInputStream(logFile);
 		fis.skip(Math.max(0, fis.available() - 51200));
 		return IOUtils.toString(fis);
 	}
