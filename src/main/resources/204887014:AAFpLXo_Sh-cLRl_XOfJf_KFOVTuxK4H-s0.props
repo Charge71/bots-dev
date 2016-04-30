@@ -12,7 +12,7 @@ en.wishes={} wishes to connect with you!
 en.request=A connection request has been sent to {}
 en.help=This bot can help you meet people checking in around you using the same bot.\nJust send your location to check in.\n\nAvailable commands:\n\n/stop - exit this bot\n/settings - switch language\n/help - show this help\n\nShare bot on Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 en.wait=Please wait 5 minutes before updating your location.
-en.unknown=Unknown command.
+en.unknown=Unknown command. To start send your location using the button below or the attachment function.
 
 it.welcome=Ciao {}!
 it.intro=Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato. Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua.
@@ -28,4 +28,4 @@ it.wishes={} desidera connettersi con te!
 it.request=Una richiesta di contatto è stata inviata a {}
 it.help=Questo bot può aiutarti a trovare persone che si registrano vicino a te con lo stesso bot.\nBasta inviare la posizione per registrarsi.\n\nComandi disponibili:\n\n/stop - esci da questo bot\n/settings - cambia lingua\n/help - mostra questo messaggio\n\nCondividi questo bot su Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 it.wait=Per favore aspetta 5 minuti prima di aggiornare la tua posizione.
-it.unknown=Comando sconosciuto.
+it.unknown=Comando sconosciuto. Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato.
