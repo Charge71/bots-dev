@@ -32,8 +32,6 @@ public class WebhookController {
 
 	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.props");
 
-	private File logFile = new File(new File(System.getProperty("OPENSHIFT_DATA_DIR")).getParentFile(), "logs/jbossews.log");
-
 	public WebhookController() {
 		if (!updateFile.exists()) {
 			try {
@@ -83,15 +81,6 @@ public class WebhookController {
 			botDispatcher.exec(token, "default", json);
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/log", method = RequestMethod.GET)
-	public String log() throws IOException {
-		log.debug("File : " + logFile.getAbsolutePath());
-		FileInputStream fis = FileUtils.openInputStream(logFile);
-		log.debug("Available: " + fis.available());
-		fis.skip((long)Math.max(0, fis.available() - 51200));
-		return IOUtils.toString(fis);
 	}
 
 	//
