@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.charge71.model.MeetLocation;
+import com.charge71.model.MeetRequests;
 import com.charge71.model.MeetUser;
 import com.charge71.telegramapi.TelegramApiAware;
 import com.charge71.telegramapi.annotations.BotCommand;
@@ -105,9 +106,31 @@ public class MeetAroundBot extends TelegramApiAware {
 		if (connectToUser == null) {
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nouser"));
 		} else {
-			client.sendMessage(connectToUser.getChatId(),
-					messages.getMessage(connectToUser.getLang(), "wishes", "@" + myself.getUsername()));
-			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "request", connectToUser.getFirstName()));
+			boolean requested = false;
+			MeetRequests meetRequests;
+			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), MeetRequests.class)) {
+				if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("requests").is(connectToId)),
+						MeetRequests.class)) {
+					requested = true;
+				} else {
+					mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(id)),
+							new Update().push("requests", connectToId), MeetRequests.class);
+				}
+			} else {
+				meetRequests = new MeetRequests();
+				meetRequests.setId(id);
+				meetRequests.setRequests(new String[] { connectToId });
+				mongoTemplate.save(meetRequests);
+			}
+			if (!requested) {
+				client.sendMessage(connectToUser.getChatId(),
+						messages.getMessage(connectToUser.getLang(), "wishes", "@" + myself.getUsername()));
+				client.sendMessage(chatId,
+						messages.getMessage(myself.getLang(), "request", connectToUser.getFirstName()));
+			} else {
+				client.sendMessage(chatId,
+						messages.getMessage(myself.getLang(), "requested", connectToUser.getFirstName()));
+			}
 		}
 	}
 
@@ -118,7 +141,7 @@ public class MeetAroundBot extends TelegramApiAware {
 		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {
-			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nousername"));
+			client.sendMessage(chatId, messages.getMessage(myself == null ? "en" : myself.getLang(), "nousername"));
 			return;
 		}
 		MeetLocation oldloc = mongoTemplate.findById(id, MeetLocation.class);
@@ -183,7 +206,7 @@ public class MeetAroundBot extends TelegramApiAware {
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
-		client.sendMessage(chatId, messages.getMessage(user.getLang(), "unknown"));
+		client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "unknown"));
 	}
 
 	//
