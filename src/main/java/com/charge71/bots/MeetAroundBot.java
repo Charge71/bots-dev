@@ -118,7 +118,7 @@ public class MeetAroundBot extends TelegramApiAware {
 		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {
-			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nousername"));
+			client.sendMessage(chatId, messages.getMessage(myself == null ? "en" : myself.getLang(), "nousername"));
 			return;
 		}
 		MeetLocation oldloc = mongoTemplate.findById(id, MeetLocation.class);
