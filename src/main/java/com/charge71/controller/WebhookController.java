@@ -1,10 +1,12 @@
 package com.charge71.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,6 +81,14 @@ public class WebhookController {
 			botDispatcher.exec(token, "default", json);
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/log", method = RequestMethod.GET)
+	public String log() throws IOException {
+		FileInputStream fis = FileUtils
+				.openInputStream(new File(System.getProperty("OPENSHIFT_LOG_DIR") + "/jbossews.log"));
+		fis.skip(Math.max(0, fis.available() - 51200));
+		return IOUtils.toString(fis);
 	}
 
 	//
