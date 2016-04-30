@@ -88,7 +88,8 @@ public class WebhookController {
 	@RequestMapping(value = "/log", method = RequestMethod.GET)
 	public String log() throws IOException {
 		FileInputStream fis = FileUtils.openInputStream(logFile);
-		fis.skip(Math.max(0, fis.available() - 51200));
+		log.debug("Available: " + fis.available());
+		fis.skip((long)Math.max(0, fis.available() - 51200));
 		return IOUtils.toString(fis);
 	}
 
