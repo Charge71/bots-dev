@@ -32,7 +32,7 @@ public class WebhookController {
 
 	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.props");
 
-	private File logFile = new File(System.getProperty("OPENSHIFT_LOG_DIR") + "/jbossews.log");
+	private File logFile = new File(new File(System.getProperty("OPENSHIFT_DATA_DIR")).getParentFile(), "logs/jbossews.log");
 
 	public WebhookController() {
 		if (!updateFile.exists()) {
