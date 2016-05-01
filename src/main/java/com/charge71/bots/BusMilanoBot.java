@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.charge71.model.BusMilanotUser;
 import com.charge71.telegramapi.TelegramApiAware;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
@@ -19,6 +22,9 @@ public class BusMilanoBot extends TelegramApiAware {
 
 	private static Logger log = Logger.getLogger(BusMilanoBot.class);
 
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 	private RestTemplate restTemplate = new RestTemplate();
 
 	@BotCommand("/start")
@@ -26,6 +32,19 @@ public class BusMilanoBot extends TelegramApiAware {
 		log.debug("/start start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String name = json.get("message").get("from").get("first_name").asText();
+		String id = json.get("message").get("from").get("id").asText();
+		BusMilanotUser user = new BusMilanotUser();
+		user.setId(id);
+		user.setChatId(chatId);
+		user.setFirstName(name);
+		if (json.get("message").get("from").get("last_name") != null) {
+			String last = json.get("message").get("from").get("last_name").asText();
+			user.setLastName(last);
+		}
+		if (json.get("message").get("from").get("username") != null) {
+			user.setUsername(json.get("message").get("from").get("username").asText());
+		}
+		mongoTemplate.save(user);
 		client.sendMessage(chatId, "Ciao " + name
 				+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
 	}
