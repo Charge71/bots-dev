@@ -116,7 +116,7 @@ public class BusMilanoBot extends TelegramApiAware {
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
-			BusMilanoFavorites favorites = new BusMilanoFavorites();
+			BusMilanoFavorites favorites = mongoTemplate.findById(id, BusMilanoFavorites.class);
 			StringBuilder message = new StringBuilder("Fermate preferite:");
 			for (BusMilanoStop stop : favorites.getStops()) {
 				message.append("\n" + stop.getName() + " /stop" + stop.getId());
