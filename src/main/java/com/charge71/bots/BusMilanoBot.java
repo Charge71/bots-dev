@@ -110,14 +110,45 @@ public class BusMilanoBot extends TelegramApiAware {
 		}
 	}
 
+	@BotCommand("/pref")
+	public void favorites(ObjectNode json, String command) {
+		log.debug("/preferiti start");
+		String id = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
+			BusMilanoFavorites favorites = new BusMilanoFavorites();
+			StringBuilder message = new StringBuilder("Fermate preferite:");
+			for (BusMilanoStop stop : favorites.getStops()) {
+				message.append("\n" + stop.getName() + " /stop" + stop.getId());
+			}
+			client.sendMessage(chatId, message.toString());
+		} else {
+			client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+		}
+	}
+
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
 		String chatId = json.get("message").get("chat").get("id").asText();
-		String text = json.get("message").get("text").asText();
+		String stopId = json.get("message").get("text").asText();
+		stop(chatId, stopId);
+	}
+
+	@BotCommand(value = "/stop", isPrefix = true)
+	public void stop(ObjectNode json, String command) {
+		log.debug("/stop start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		String stopId = command.substring(5);
+		stop(chatId, stopId);
+	}
+
+	//
+
+	private void stop(String chatId, String stopId) {
 		try {
-			Long.parseLong(text);
-			ObjectNode response = getInfo(text);
+			Long.parseLong(stopId);
+			ObjectNode response = getInfo(stopId);
 			List<String> list = getResponseMessage(response);
 			for (String message : list) {
 				client.sendMarkdownMessage(chatId, message);
@@ -125,12 +156,10 @@ public class BusMilanoBot extends TelegramApiAware {
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId, "Il codice inserito non è corretto.");
 		} catch (RestClientException e) {
-			log.error("Errore su codice: " + text, e);
+			log.error("Errore su codice: " + stopId, e);
 			client.sendMessage(chatId, "Errore nell'elaborazione del codice.");
 		}
 	}
-
-	//
 
 	private ObjectNode getInfo(String code) {
 		UriComponentsBuilder builder = UriComponentsBuilder
