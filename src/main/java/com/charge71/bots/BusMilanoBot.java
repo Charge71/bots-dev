@@ -6,10 +6,15 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.charge71.model.BusMilanoFavorites;
+import com.charge71.model.BusMilanoFavorites.BusMilanoStop;
 import com.charge71.model.BusMilanotUser;
 import com.charge71.telegramapi.TelegramApiAware;
 import com.charge71.telegramapi.annotations.BotCommand;
@@ -51,10 +56,58 @@ public class BusMilanoBot extends TelegramApiAware {
 
 	@BotCommand("/help")
 	public void help(ObjectNode json, String command) {
-		log.debug("/start start");
+		log.debug("/help start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		client.sendMessage(chatId,
 				"Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
+	}
+
+	@BotCommand(value = "/fav", isPrefix = true)
+	public void fav(ObjectNode json, String command) {
+		log.debug("/fav start");
+		String id = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		String stopId = command.substring(4);
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
+			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+					BusMilanoFavorites.class)) {
+				client.sendMessage(chatId, "Fermata già inclusa nei preferiti.");
+			} else {
+				try {
+					Long.parseLong(stopId);
+					ObjectNode info = getInfo(stopId);
+					BusMilanoStop stop = new BusMilanoStop();
+					stop.setId(stopId);
+					stop.setName(info.get("StopPoint").get("Description").asText());
+					mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(id)),
+							new Update().push("stops", stop), BusMilanoFavorites.class);
+					client.sendMessage(chatId, "Fermata " + stop.getName() + " aggiunta ai preferiti.");
+				} catch (NumberFormatException e) {
+					client.sendMessage(chatId, "Il codice inserito non è corretto.");
+				} catch (RestClientException e) {
+					log.error("Errore su codice: " + stopId, e);
+					client.sendMessage(chatId, "Errore nell'elaborazione del codice.");
+				}
+			}
+		} else {
+			try {
+				Long.parseLong(stopId);
+				ObjectNode info = getInfo(stopId);
+				BusMilanoStop stop = new BusMilanoStop();
+				stop.setId(stopId);
+				stop.setName(info.get("StopPoint").get("Description").asText());
+				BusMilanoFavorites favorites = new BusMilanoFavorites();
+				favorites.setId(id);
+				favorites.setStops(new BusMilanoStop[] { stop });
+				mongoTemplate.save(favorites);
+				client.sendMessage(chatId, "Fermata " + stop.getName() + " aggiunta ai preferiti.");
+			} catch (NumberFormatException e) {
+				client.sendMessage(chatId, "Il codice inserito non è corretto.");
+			} catch (RestClientException e) {
+				log.error("Errore su codice: " + stopId, e);
+				client.sendMessage(chatId, "Errore nell'elaborazione del codice.");
+			}
+		}
 	}
 
 	@BotCommand("default")
