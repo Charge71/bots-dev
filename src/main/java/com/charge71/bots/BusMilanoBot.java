@@ -179,11 +179,11 @@ public class BusMilanoBot extends TelegramApiAware {
 			String bookletUrl = line.get("BookletUrl").asText();
 			String message = "Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
 					+ bookletUrl + "))";
-			if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
-					BusMilanoFavorites.class)) {
-				message += "\n_Aggiungi ai preferiti /fav" + stopId + "_";
-			}
 			result.add(message);
+		}
+		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+				BusMilanoFavorites.class)) {
+			result.add("Aggiungi fermata ai preferiti /fav" + stopId);
 		}
 		return result;
 	}
