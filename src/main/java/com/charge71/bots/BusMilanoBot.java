@@ -112,7 +112,7 @@ public class BusMilanoBot extends TelegramApiAware {
 
 	@BotCommand("/pref")
 	public void favorites(ObjectNode json, String command) {
-		log.debug("/preferiti start");
+		log.debug("/pref start");
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
@@ -130,26 +130,28 @@ public class BusMilanoBot extends TelegramApiAware {
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
+		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = json.get("message").get("text").asText();
-		stop(chatId, stopId);
+		stop(chatId, stopId, id);
 	}
 
 	@BotCommand(value = "/stop", isPrefix = true)
 	public void stop(ObjectNode json, String command) {
 		log.debug("/stop start");
+		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = command.substring(5);
-		stop(chatId, stopId);
+		stop(chatId, stopId, id);
 	}
 
 	//
 
-	private void stop(String chatId, String stopId) {
+	private void stop(String chatId, String stopId, String userId) {
 		try {
 			Long.parseLong(stopId);
 			ObjectNode response = getInfo(stopId);
-			List<String> list = getResponseMessage(response);
+			List<String> list = getResponseMessage(response, stopId, userId);
 			for (String message : list) {
 				client.sendMarkdownMessage(chatId, message);
 			}
@@ -167,7 +169,7 @@ public class BusMilanoBot extends TelegramApiAware {
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
-	private List<String> getResponseMessage(ObjectNode json) {
+	private List<String> getResponseMessage(ObjectNode json, String stopId, String id) {
 		List<String> result = new ArrayList<>(json.get("Lines").size() + 1);
 		result.add("*Fermata " + json.get("StopPoint").get("Description") + "*");
 		for (JsonNode line : json.get("Lines")) {
@@ -175,8 +177,13 @@ public class BusMilanoBot extends TelegramApiAware {
 			String lineDescription = line.get("Line").get("LineDescription").asText();
 			String waitMessage = line.get("WaitMessage").isNull() ? "-" : line.get("WaitMessage").asText();
 			String bookletUrl = line.get("BookletUrl").asText();
-			result.add("Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
-					+ bookletUrl + "))");
+			String message = "Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
+					+ bookletUrl + "))";
+			if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+					BusMilanoFavorites.class)) {
+				message += "\n_Aggiungi ai preferiti /fav" + stopId + "_";
+			}
+			result.add(message);
 		}
 		return result;
 	}
