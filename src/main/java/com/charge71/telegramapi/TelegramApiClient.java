@@ -36,6 +36,13 @@ public class TelegramApiClient {
 				.queryParam("reply_markup", locationRequest(request));
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
+	
+	public ObjectNode sendButton(String chatId, String text, String request) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
+				.queryParam("chat_id", chatId).queryParam("text", text)
+				.queryParam("reply_markup", button(request));
+		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+	}
 
 	public ObjectNode sendPhoto(String chatId, String fileId, String caption) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendPhoto")
@@ -59,6 +66,10 @@ public class TelegramApiClient {
 
 	private String locationRequest(String request) {
 		return "{\"keyboard\":[[{\"text\":\"" + request + "\",\"request_location\":true}]],\"resize_keyboard\":true}";
+	}
+	
+	private String button(String request) {
+		return "{\"keyboard\":[[{\"text\":\"" + request + "\"}]],\"resize_keyboard\":true}";
 	}
 
 	private String languageRequest() {

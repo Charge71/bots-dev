@@ -50,8 +50,10 @@ public class BusMilanoBot extends TelegramApiAware {
 			user.setUsername(json.get("message").get("from").get("username").asText());
 		}
 		mongoTemplate.save(user);
-		client.sendMessage(chatId, "Ciao " + name
-				+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
+		client.sendButton(chatId,
+				"Ciao " + name
+						+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.",
+				"/pref");
 	}
 
 	@BotCommand("/help")
