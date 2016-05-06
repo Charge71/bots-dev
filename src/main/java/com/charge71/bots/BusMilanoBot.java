@@ -53,7 +53,7 @@ public class BusMilanoBot extends TelegramApiAware {
 		client.sendButton(chatId,
 				"Ciao " + name
 						+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.",
-				"/pref");
+				"/preferite");
 	}
 
 	@BotCommand("/help")
@@ -61,7 +61,7 @@ public class BusMilanoBot extends TelegramApiAware {
 		log.debug("/help start");
 		String chatId = json.get("message").get("chat").get("id").asText();
 		client.sendMessage(chatId,
-				"Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.");
+				"Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa. Premi il pulsante in basso o /preferite per visualizzare le fermate salvate come preferite.");
 	}
 
 	@BotCommand(value = "/fav", isPrefix = true)
@@ -134,9 +134,9 @@ public class BusMilanoBot extends TelegramApiAware {
 		}
 	}
 
-	@BotCommand("/pref")
+	@BotCommand("/preferite")
 	public void favorites(ObjectNode json, String command) {
-		log.debug("/pref start");
+		log.debug("/preferite start");
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
