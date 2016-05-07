@@ -74,9 +74,9 @@ public class BusMilanoBot extends TelegramApiAware {
 			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
 					BusMilanoFavorites.class)) {
 				client.sendMessage(chatId, "Fermata già inclusa nei preferiti.");
-			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.4").exists(true)),
+			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.9").exists(true)),
 						BusMilanoFavorites.class)) {
-					client.sendMessage(chatId, "Non puoi avere più di 5 fermate preferite.");
+					client.sendMessage(chatId, "Non puoi avere più di 10 fermate preferite.");
 			} else {
 				try {
 					Long.parseLong(stopId);
@@ -148,6 +148,7 @@ public class BusMilanoBot extends TelegramApiAware {
 				StringBuilder message = new StringBuilder("Fermate preferite:");
 				for (BusMilanoStop stop : favorites.getStops()) {
 					message.append("\n" + stop.getName() + " /stop" + stop.getId());
+					message.append(" (rimuovi /unfav" + stop.getId() + ")");
 				}
 				client.sendMessage(chatId, message.toString());
 			} else {
