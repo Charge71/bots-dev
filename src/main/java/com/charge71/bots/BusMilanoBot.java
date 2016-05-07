@@ -74,6 +74,9 @@ public class BusMilanoBot extends TelegramApiAware {
 			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
 					BusMilanoFavorites.class)) {
 				client.sendMessage(chatId, "Fermata già inclusa nei preferiti.");
+			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.4").exists(true)),
+						BusMilanoFavorites.class)) {
+					client.sendMessage(chatId, "Non puoi avere più di 5 fermate preferite.");
 			} else {
 				try {
 					Long.parseLong(stopId);
