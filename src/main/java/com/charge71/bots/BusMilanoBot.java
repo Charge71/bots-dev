@@ -75,8 +75,8 @@ public class BusMilanoBot extends TelegramApiAware {
 					BusMilanoFavorites.class)) {
 				client.sendMessage(chatId, "Fermata già inclusa nei preferiti.");
 			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.9").exists(true)),
-						BusMilanoFavorites.class)) {
-					client.sendMessage(chatId, "Non puoi avere più di 10 fermate preferite.");
+					BusMilanoFavorites.class)) {
+				client.sendMessage(chatId, "Non puoi avere più di 10 fermate preferite.");
 			} else {
 				try {
 					Long.parseLong(stopId);
@@ -147,7 +147,7 @@ public class BusMilanoBot extends TelegramApiAware {
 			if (favorites.getStops() != null && favorites.getStops().length > 0) {
 				StringBuilder message = new StringBuilder("Fermate preferite:");
 				for (BusMilanoStop stop : favorites.getStops()) {
-					message.append("\n" + stop.getName() + " /stop" + stop.getId());
+					message.append("\n" + stop.getName() + " /ferm" + stop.getId());
 					message.append(" (rimuovi /unfav" + stop.getId() + ")");
 				}
 				client.sendMessage(chatId, message.toString());
@@ -168,13 +168,27 @@ public class BusMilanoBot extends TelegramApiAware {
 		stop(chatId, stopId, id);
 	}
 
-	@BotCommand(value = "/stop", isPrefix = true)
-	public void stop(ObjectNode json, String command) {
-		log.debug("/stop start");
+	@BotCommand(value = "/ferm", isPrefix = true)
+	public void ferm(ObjectNode json, String command) {
+		log.debug("/ferm start");
 		String id = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = command.substring(5);
 		stop(chatId, stopId, id);
+	}
+
+	@BotCommand("/stop")
+	public void stop(ObjectNode json, String command) {
+		log.debug("/stop start");
+		String id = json.get("message").get("from").get("id").asText();
+		BusMilanoFavorites favorites = mongoTemplate.findById(id, BusMilanoFavorites.class);
+		if (favorites != null) {
+			mongoTemplate.remove(favorites);
+		}
+		BusMilanotUser user = mongoTemplate.findById(id, BusMilanotUser.class);
+		if (user != null) {
+			mongoTemplate.remove(user);
+		}
 	}
 
 	//
