@@ -202,10 +202,10 @@ public class BusMilanoBot extends TelegramApiAware {
 				client.sendMarkdownMessage(chatId, message);
 			}
 		} catch (NumberFormatException e) {
-			client.sendMessage(chatId, "Il codice inserito non è corretto.");
+			client.sendMessage(chatId, "Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
-			client.sendMessage(chatId, "Errore nell'elaborazione del codice.");
+			client.sendMessage(chatId, "Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
 		}
 	}
 
