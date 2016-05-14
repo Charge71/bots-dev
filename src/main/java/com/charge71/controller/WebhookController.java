@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.charge71.telegramapi.BotDispatcher;
@@ -79,6 +80,16 @@ public class WebhookController {
 			botDispatcher.exec(token, "default", json);
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/messenger/{name}", method = RequestMethod.GET)
+	public String messenger(@PathVariable("name") String name, @RequestParam("hub.verify_token") String token,
+			@RequestParam("hub.challenge") String challenge) {
+		if (token.equals(name)) {
+			return challenge;
+		} else {
+			return "error";
+		}
 	}
 
 	//
