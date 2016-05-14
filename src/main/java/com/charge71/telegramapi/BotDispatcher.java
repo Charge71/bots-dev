@@ -55,9 +55,9 @@ public class BotDispatcher {
 						}
 					}
 				}
-				if (bot instanceof TelegramApiAware) {
-					((TelegramApiAware) bot).setClient(new TelegramApiClient(token));
-					((TelegramApiAware) bot).setMessages(new MessageHelper(token));
+				if (bot instanceof PlatformApiAware) {
+					((PlatformApiAware) bot).setClient(new TelegramApiClient(token));
+					((PlatformApiAware) bot).setMessages(new MessageHelper(token));
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);

@@ -1,4 +1,4 @@
-package com.charge71.bots;
+package com.charge71.telegram.bots;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,72 +9,58 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.charge71.framework.ApiClient;
 import com.charge71.model.BusMilanoFavorites;
 import com.charge71.model.BusMilanoFavorites.BusMilanoStop;
 import com.charge71.model.BusMilanotUser;
-import com.charge71.telegramapi.TelegramApiAware;
-import com.charge71.telegramapi.annotations.BotCommand;
-import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@TelegramBot("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA")
-public class BusMilanoBot extends TelegramApiAware {
+public class BusMilanoBotService {
 
-	private static Logger log = Logger.getLogger(BusMilanoBot.class);
+	private static Logger log = Logger.getLogger(BusMilanoBotService.class);
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	@BotCommand("/start")
-	public void start(ObjectNode json, String command) {
-		log.debug("/start start");
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String name = json.get("message").get("from").get("first_name").asText();
-		String id = json.get("message").get("from").get("id").asText();
+	public void startBot(ApiClient client, String chatId, String userFirstName, String userLastName, String username,
+			String userId) {
 		BusMilanotUser user = new BusMilanotUser();
-		user.setId(id);
+		user.setId(userId);
 		user.setChatId(chatId);
-		user.setFirstName(name);
-		if (json.get("message").get("from").get("last_name") != null) {
-			String last = json.get("message").get("from").get("last_name").asText();
-			user.setLastName(last);
+		user.setFirstName(userFirstName);
+		if (userLastName != null) {
+			user.setLastName(userLastName);
 		}
-		if (json.get("message").get("from").get("username") != null) {
-			user.setUsername(json.get("message").get("from").get("username").asText());
+		if (username != null) {
+			user.setUsername(username);
 		}
 		mongoTemplate.save(user);
 		client.sendButton(chatId,
-				"Ciao " + name
+				"Ciao " + userFirstName
 						+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.",
 				"/preferite");
 	}
 
-	@BotCommand("/help")
-	public void help(ObjectNode json, String command) {
-		log.debug("/help start");
-		String chatId = json.get("message").get("chat").get("id").asText();
+	public void help(ApiClient client, String chatId) {
 		client.sendMessage(chatId,
 				"Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa. Premi il pulsante in basso o /preferite per visualizzare le fermate salvate come preferite.");
 	}
 
-	@BotCommand(value = "/fav", isPrefix = true)
-	public void fav(ObjectNode json, String command) {
-		log.debug("/fav start");
-		String id = json.get("message").get("from").get("id").asText();
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String stopId = command.substring(4);
-		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
-			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+	public void addFavorite(ApiClient client, String stopId, String chatId, String userId) {
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
+			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 					BusMilanoFavorites.class)) {
 				client.sendMessage(chatId, "Fermata già inclusa nei preferiti.");
-			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.9").exists(true)),
+			} else if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.9").exists(true)),
 					BusMilanoFavorites.class)) {
 				client.sendMessage(chatId, "Non puoi avere più di 10 fermate preferite.");
 			} else {
@@ -84,7 +70,7 @@ public class BusMilanoBot extends TelegramApiAware {
 					BusMilanoStop stop = new BusMilanoStop();
 					stop.setId(stopId);
 					stop.setName(info.get("StopPoint").get("Description").asText());
-					mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(id)),
+					mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userId)),
 							new Update().push("stops", stop), BusMilanoFavorites.class);
 					client.sendMessage(chatId, "Fermata " + stop.getName() + " aggiunta ai preferiti.");
 				} catch (NumberFormatException e) {
@@ -102,7 +88,7 @@ public class BusMilanoBot extends TelegramApiAware {
 				stop.setId(stopId);
 				stop.setName(info.get("StopPoint").get("Description").asText());
 				BusMilanoFavorites favorites = new BusMilanoFavorites();
-				favorites.setId(id);
+				favorites.setId(userId);
 				favorites.setStops(new BusMilanoStop[] { stop });
 				mongoTemplate.save(favorites);
 				client.sendMessage(chatId, "Fermata " + stop.getName() + " aggiunta ai preferiti.");
@@ -115,19 +101,14 @@ public class BusMilanoBot extends TelegramApiAware {
 		}
 	}
 
-	@BotCommand(value = "/unfav", isPrefix = true)
-	public void unfav(ObjectNode json, String command) {
-		log.debug("/unfav start");
-		String id = json.get("message").get("from").get("id").asText();
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String stopId = command.substring(6);
-		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
-			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+	public void removeFavorite(ApiClient client, String stopId, String chatId, String userId) {
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
+			if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 					BusMilanoFavorites.class)) {
 				BusMilanoStop stop = new BusMilanoStop();
 				stop.setId(stopId);
-				mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(id)), new Update().pull("stops", stop),
-						BusMilanoFavorites.class);
+				mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userId)),
+						new Update().pull("stops", stop), BusMilanoFavorites.class);
 				client.sendMessage(chatId, "Fermata rimossa dai preferiti.");
 			} else {
 				client.sendMessage(chatId, "Fermata non inclusa nei preferiti.");
@@ -137,13 +118,9 @@ public class BusMilanoBot extends TelegramApiAware {
 		}
 	}
 
-	@BotCommand("/preferite")
-	public void favorites(ObjectNode json, String command) {
-		log.debug("/preferite start");
-		String id = json.get("message").get("from").get("id").asText();
-		String chatId = json.get("message").get("chat").get("id").asText();
-		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(id)), BusMilanoFavorites.class)) {
-			BusMilanoFavorites favorites = mongoTemplate.findById(id, BusMilanoFavorites.class);
+	public void listFavorites(ApiClient client, String chatId, String userId) {
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
+			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
 			if (favorites.getStops() != null && favorites.getStops().length > 0) {
 				StringBuilder message = new StringBuilder("Fermate preferite:");
 				for (BusMilanoStop stop : favorites.getStops()) {
@@ -159,41 +136,7 @@ public class BusMilanoBot extends TelegramApiAware {
 		}
 	}
 
-	@BotCommand("default")
-	public void def(ObjectNode json, String command) {
-		log.debug("default start");
-		String id = json.get("message").get("from").get("id").asText();
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String stopId = json.get("message").get("text").asText();
-		stop(chatId, stopId, id);
-	}
-
-	@BotCommand(value = "/ferm", isPrefix = true)
-	public void ferm(ObjectNode json, String command) {
-		log.debug("/ferm start");
-		String id = json.get("message").get("from").get("id").asText();
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String stopId = command.substring(5);
-		stop(chatId, stopId, id);
-	}
-
-	@BotCommand("/stop")
-	public void stop(ObjectNode json, String command) {
-		log.debug("/stop start");
-		String id = json.get("message").get("from").get("id").asText();
-		BusMilanoFavorites favorites = mongoTemplate.findById(id, BusMilanoFavorites.class);
-		if (favorites != null) {
-			mongoTemplate.remove(favorites);
-		}
-		BusMilanotUser user = mongoTemplate.findById(id, BusMilanotUser.class);
-		if (user != null) {
-			mongoTemplate.remove(user);
-		}
-	}
-
-	//
-
-	private void stop(String chatId, String stopId, String userId) {
+	public void sendStopInfo(ApiClient client, String chatId, String stopId, String userId) {
 		try {
 			Long.parseLong(stopId);
 			ObjectNode response = getInfo(stopId);
@@ -202,12 +145,36 @@ public class BusMilanoBot extends TelegramApiAware {
 				client.sendMarkdownMessage(chatId, message);
 			}
 		} catch (NumberFormatException e) {
-			client.sendMessage(chatId, "Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			client.sendMessage(chatId,
+					"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+				client.sendMessage(chatId,
+						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			} else {
+				log.error("Errore su codice: " + stopId, e);
+				client.sendMessage(chatId,
+						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
-			client.sendMessage(chatId, "Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			client.sendMessage(chatId,
+					"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
 		}
 	}
+
+	public void stopBot(String userId) {
+		BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
+		if (favorites != null) {
+			mongoTemplate.remove(favorites);
+		}
+		BusMilanotUser user = mongoTemplate.findById(userId, BusMilanotUser.class);
+		if (user != null) {
+			mongoTemplate.remove(user);
+		}
+	}
+
+	//
 
 	private ObjectNode getInfo(String code) {
 		UriComponentsBuilder builder = UriComponentsBuilder

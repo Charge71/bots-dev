@@ -3,9 +3,10 @@ package com.charge71.telegramapi;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.charge71.framework.ApiClient;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class TelegramApiClient {
+public class TelegramApiClient implements ApiClient {
 
 	private static final String BASE_URL = "https://api.telegram.org/bot";
 

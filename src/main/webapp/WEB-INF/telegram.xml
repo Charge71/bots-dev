@@ -7,10 +7,12 @@
 		init-method="init">
 		<property name="botClasses">
 			<list>
-				<value>com.charge71.bots.MeetAroundBot</value>
-				<value>com.charge71.bots.BusMilanoBot</value>
+				<value>com.charge71.telegram.bots.MeetAroundBot</value>
+				<value>com.charge71.telegram.bots.BusMilanoBot</value>
 			</list>
 		</property>
 	</bean>
+	
+	<bean class="com.charge71.telegram.bots.BusMilanoBotService"/>
 
 </beans>
