@@ -1,6 +1,5 @@
-package com.charge71.telegramapi;
+package com.charge71.framework;
 
-import com.charge71.framework.ApiClient;
 import com.charge71.lang.MessageHelper;
 
 public class PlatformApiAware {
@@ -9,11 +8,11 @@ public class PlatformApiAware {
 
 	public MessageHelper messages;
 
-	protected void setClient(ApiClient client) {
+	public void setClient(ApiClient client) {
 		this.client = client;
 	}
 
-	protected void setMessages(MessageHelper messages) {
+	public void setMessages(MessageHelper messages) {
 		this.messages = messages;
 	}
 

@@ -12,10 +12,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.charge71.framework.PlatformApiAware;
 import com.charge71.model.MeetLocation;
 import com.charge71.model.MeetRequests;
 import com.charge71.model.MeetUser;
-import com.charge71.telegramapi.PlatformApiAware;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;

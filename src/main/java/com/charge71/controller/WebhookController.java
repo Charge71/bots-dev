@@ -91,6 +91,12 @@ public class WebhookController {
 			return "error";
 		}
 	}
+	
+	@RequestMapping(value = "/messenger/{name}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> messenger(@PathVariable("name") String name, @RequestBody ObjectNode json) {
+		log.debug(json);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 
 	//
 

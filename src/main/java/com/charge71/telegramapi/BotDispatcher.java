@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import com.charge71.framework.PlatformApiAware;
 import com.charge71.lang.MessageHelper;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
