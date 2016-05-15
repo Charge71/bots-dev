@@ -66,8 +66,8 @@ public class MessengerApiClient implements ApiClient {
 
 	@Override
 	public ObjectNode getUserInfo(String userId) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(userId)
-				.queryParam("access_token", token);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION).path("/")
+				.path(userId).queryParam("access_token", token);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
