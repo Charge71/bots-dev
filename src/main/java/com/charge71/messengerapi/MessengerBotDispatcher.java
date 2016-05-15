@@ -66,7 +66,7 @@ public class MessengerBotDispatcher {
 				}
 				if (bot instanceof PlatformApiAware) {
 					((PlatformApiAware) bot).setClient(new MessengerApiClient(token));
-					((PlatformApiAware) bot).setMessages(new MessageHelper(token));
+					//((PlatformApiAware) bot).setMessages(new MessageHelper(token));
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
