@@ -31,9 +31,9 @@ public class BusMilanoBotService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	public void createUser(ApiClient client, String userId) {
+	public void createUser(ApiClient client, String userId, String chatId) {
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanotUser.class)) {
-			ObjectNode json = client.getUserInfo(userId);
+			ObjectNode json = client.getUserInfo(chatId);
 			BusMilanotUser user = new BusMilanotUser();
 			user.setId(userId);
 			user.setFirstName(json.get("first_name").asText());
