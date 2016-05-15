@@ -70,7 +70,7 @@ public class MessengerBotDispatcher {
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
-				log.debug("Message: " + messages.get(botname));
+				log.debug("Message: " + messages.get(botname).getName());
 				log.debug("Postbacks: " + methods.get(botname).keySet());
 				log.debug("Prefix postbacks: " + prefixMethods.get(botname).keySet());
 			} catch (Exception e) {

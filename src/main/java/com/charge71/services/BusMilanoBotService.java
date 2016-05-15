@@ -31,6 +31,17 @@ public class BusMilanoBotService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
+	public void createUser(ApiClient client, String userId) {
+		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanotUser.class)) {
+			ObjectNode json = client.getUserInfo(userId);
+			BusMilanotUser user = new BusMilanotUser();
+			user.setId(userId);
+			user.setFirstName(json.get("first_name").asText());
+			user.setLastName(json.get("last_name").asText());
+			mongoTemplate.save(user);
+		}
+	}
+
 	public void startBot(ApiClient client, String chatId, String userFirstName, String userLastName, String username,
 			String userId) {
 		BusMilanotUser user = new BusMilanotUser();

@@ -10,6 +10,8 @@ public class MessengerApiClient implements ApiClient {
 
 	private static final String BASE_URL = "https://graph.facebook.com";
 
+	private static final String VERSION = "v2.6";
+
 	private final String token;
 
 	private RestTemplate restTemplate = new RestTemplate();
@@ -20,8 +22,10 @@ public class MessengerApiClient implements ApiClient {
 
 	@Override
 	public ObjectNode sendMessage(String chatId, String text) {
-		// TODO Auto-generated method stub
-		return null;
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
+				.path("/me/messages").queryParam("access_token", token);
+		String message = "{\"recipient\":{\"id\":\"" + chatId + "\"},\"message\":{\"text\":\"" + text + "\"}}";
+		return restTemplate.postForObject(builder.build().encode().toUri(), message, ObjectNode.class);
 	}
 
 	@Override
