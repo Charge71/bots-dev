@@ -13,4 +13,6 @@
 		</property>
 	</bean>
 	
+	<bean class="com.charge71.services.BusMilanoBotService"/>
+	
 </beans>
