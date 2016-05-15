@@ -1,5 +1,9 @@
 package com.charge71.messengerapi;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,7 +29,11 @@ public class MessengerApiClient implements ApiClient {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
 				.path("/me/messages").queryParam("access_token", token);
 		String message = "{\"recipient\":{\"id\":\"" + chatId + "\"},\"message\":{\"text\":\"" + text + "\"}}";
-		return restTemplate.postForObject(builder.build().encode().toUri(), message, ObjectNode.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(message, headers);
+		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
+				.getBody();
 	}
 
 	@Override
@@ -33,7 +41,11 @@ public class MessengerApiClient implements ApiClient {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
 				.path("/me/messages").queryParam("access_token", token);
 		String message = "{\"recipient\":{\"id\":\"" + chatId + "\"},\"message\":{\"text\":\"" + text + "\"}}";
-		return restTemplate.postForObject(builder.build().encode().toUri(), message, ObjectNode.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(message, headers);
+		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
+				.getBody();
 	}
 
 	@Override
