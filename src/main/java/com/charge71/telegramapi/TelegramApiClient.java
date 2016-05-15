@@ -4,6 +4,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.charge71.framework.ApiClient;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TelegramApiClient implements ApiClient {
@@ -11,7 +12,7 @@ public class TelegramApiClient implements ApiClient {
 	private static final String BASE_URL = "https://api.telegram.org/bot";
 
 	private final String token;
-
+	
 	private RestTemplate restTemplate = new RestTemplate();
 
 	TelegramApiClient(String token) {
@@ -37,11 +38,10 @@ public class TelegramApiClient implements ApiClient {
 				.queryParam("reply_markup", locationRequest(request));
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
-	
+
 	public ObjectNode sendButton(String chatId, String text, String request) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
-				.queryParam("chat_id", chatId).queryParam("text", text)
-				.queryParam("reply_markup", button(request));
+				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", button(request));
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
@@ -73,7 +73,7 @@ public class TelegramApiClient implements ApiClient {
 	private String locationRequest(String request) {
 		return "{\"keyboard\":[[{\"text\":\"" + request + "\",\"request_location\":true}]],\"resize_keyboard\":true}";
 	}
-	
+
 	private String button(String request) {
 		return "{\"keyboard\":[[{\"text\":\"" + request + "\"}]],\"resize_keyboard\":true}";
 	}
