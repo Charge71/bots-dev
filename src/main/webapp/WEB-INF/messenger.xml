@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<bean id="botDispatcher" class="com.charge71.messengerapi.MessengerBotDispatcher"
+	<bean id="messengerDispatcher" class="com.charge71.messengerapi.MessengerBotDispatcher"
 		init-method="init">
 		<property name="botClasses">
 			<list>
