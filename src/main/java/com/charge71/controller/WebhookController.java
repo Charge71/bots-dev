@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.charge71.telegramapi.BotDispatcher;
+import com.charge71.messengerapi.MessengerBotDispatcher;
+import com.charge71.telegramapi.TelegramBotDispatcher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -27,7 +28,10 @@ public class WebhookController {
 	private static Logger log = Logger.getLogger(WebhookController.class);
 
 	@Autowired
-	private BotDispatcher botDispatcher;
+	private TelegramBotDispatcher botDispatcher;
+
+	@Autowired
+	private MessengerBotDispatcher messengerDispatcher;
 
 	private File updateFile = new File(System.getProperty("OPENSHIFT_DATA_DIR") + "/update.props");
 
@@ -91,10 +95,19 @@ public class WebhookController {
 			return "error";
 		}
 	}
-	
+
 	@RequestMapping(value = "/messenger/{name}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> messenger(@PathVariable("name") String name, @RequestBody ObjectNode json) {
+		log.debug(name);
 		log.debug(json);
+		if (json.get("entry").get(0).get("messaging").get(0).get("message") != null) {
+			messengerDispatcher.exec(name, null, json);
+			log.info("Default message");
+		} else if (json.get("entry").get(0).get("messaging").get(0).get("postback") != null) {
+			String postback = json.get("entry").get(0).get("messaging").get(0).get("postback").asText();
+			messengerDispatcher.exec(name, postback, json);
+			log.info("Postback: " + postback);
+		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 

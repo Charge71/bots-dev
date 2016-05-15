@@ -3,12 +3,11 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<bean id="botDispatcher" class="com.charge71.telegramapi.TelegramBotDispatcher"
+	<bean id="botDispatcher" class="com.charge71.messengerapi.MessengerBotDispatcher"
 		init-method="init">
 		<property name="botClasses">
 			<list>
-				<value>com.charge71.telegram.bots.MeetAroundBot</value>
-				<value>com.charge71.telegram.bots.BusMilanoBot</value>
+				<value>com.charge71.messenger.bots.BusMilanoBot</value>
 			</list>
 		</property>
 	</bean>

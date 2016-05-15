@@ -18,4 +18,5 @@ public interface ApiClient {
 
 	public ObjectNode getUserProfilePhoto(String userId);
 
+	public ObjectNode getUserInfo(String userId);
 }

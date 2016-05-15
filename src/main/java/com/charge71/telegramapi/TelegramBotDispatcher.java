@@ -16,9 +16,9 @@ import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class BotDispatcher {
+public class TelegramBotDispatcher {
 
-	private static Logger log = Logger.getLogger(BotDispatcher.class);
+	private static Logger log = Logger.getLogger(TelegramBotDispatcher.class);
 
 	@Autowired
 	private AutowireCapableBeanFactory beanFactory;

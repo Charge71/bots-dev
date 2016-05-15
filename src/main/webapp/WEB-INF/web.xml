@@ -10,7 +10,9 @@
 		<param-value>
 			/WEB-INF/dispatcher-servlet.xml
 			/WEB-INF/mongodb.xml
+			/WEB-INF/services.xml
 			/WEB-INF/telegram.xml
+			/WEB-INF/messenger.xml
 	    </param-value>
 	</context-param>
 	<listener>

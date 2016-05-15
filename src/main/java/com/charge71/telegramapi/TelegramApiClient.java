@@ -63,6 +63,11 @@ public class TelegramApiClient implements ApiClient {
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
+	@Override
+	public ObjectNode getUserInfo(String userId) {
+		// unused
+		return null;
+	}
 	//
 
 	private String locationRequest(String request) {
@@ -76,4 +81,5 @@ public class TelegramApiClient implements ApiClient {
 	private String languageRequest() {
 		return "{\"inline_keyboard\":[[{\"text\":\"English\",\"callback_data\":\"lang_en\"},{\"text\":\"Italiano\",\"callback_data\":\"lang_it\"}]]}";
 	}
+
 }

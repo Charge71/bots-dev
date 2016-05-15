@@ -1,4 +1,4 @@
-package com.charge71.telegram.bots;
+package com.charge71.services;
 
 import java.util.ArrayList;
 import java.util.List;

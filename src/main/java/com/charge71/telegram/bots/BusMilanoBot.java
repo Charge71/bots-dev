@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.charge71.framework.PlatformApiAware;
+import com.charge71.services.BusMilanoBotService;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
