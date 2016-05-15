@@ -101,12 +101,12 @@ public class WebhookController {
 		log.debug(name);
 		log.debug(json);
 		if (json.get("entry").get(0).get("messaging").get(0).get("message") != null) {
-			messengerDispatcher.exec(name, null, json);
 			log.info("Default message");
+			messengerDispatcher.exec(name, null, json);
 		} else if (json.get("entry").get(0).get("messaging").get(0).get("postback") != null) {
 			String postback = json.get("entry").get(0).get("messaging").get(0).get("postback").asText();
-			messengerDispatcher.exec(name, postback, json);
 			log.info("Postback: " + postback);
+			messengerDispatcher.exec(name, postback, json);
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}

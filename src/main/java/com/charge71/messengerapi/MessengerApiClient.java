@@ -30,8 +30,10 @@ public class MessengerApiClient implements ApiClient {
 
 	@Override
 	public ObjectNode sendMarkdownMessage(String chatId, String text) {
-		// TODO Auto-generated method stub
-		return null;
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
+				.path("/me/messages").queryParam("access_token", token);
+		String message = "{\"recipient\":{\"id\":\"" + chatId + "\"},\"message\":{\"text\":\"" + text + "\"}}";
+		return restTemplate.postForObject(builder.build().encode().toUri(), message, ObjectNode.class);
 	}
 
 	@Override
