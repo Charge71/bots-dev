@@ -139,6 +139,7 @@ public class BusMilanoBotService {
 					message.append(" (rimuovi /unfav" + stop.getId() + ")");
 				}
 				client.sendMessage(chatId, message.toString());
+				client.sendMarkdownMessage(chatId, "_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)");
 			} else {
 				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
 			}
