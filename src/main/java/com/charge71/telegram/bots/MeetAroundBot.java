@@ -162,10 +162,14 @@ public class MeetAroundBot extends PlatformApiAware {
 		location.setCreated(date);
 		location.setLocation(new GeoJsonPoint(longitude, latitude));
 		mongoTemplate.save(location);
-		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200).and("id").ne(id);
+		MeetRequests requests = mongoTemplate.findById(id, MeetRequests.class);
+		int count = 0;
+		if (requests != null) {
+			count = requests.getRequests().length;
+		}
+		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200 + (count * 10)).and("id").ne(id);
 		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
 		if (list.isEmpty()) {
-			long count = mongoTemplate.count(new Query(), MeetUser.class);
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nochecks", String.valueOf(count)));
 		} else {
 			List<String> ids = new ArrayList<>(list.size());
