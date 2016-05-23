@@ -167,7 +167,8 @@ public class MeetAroundBot extends PlatformApiAware {
 		if (requests != null) {
 			count = requests.getRequests().length;
 		}
-		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200 + (count * 10)).and("id").ne(id);
+		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200 + (count * 10)).and("id")
+				.ne(id);
 		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
 		if (list.isEmpty()) {
 			client.sendMessage(chatId, messages.getMessage(myself.getLang(), "nochecks", String.valueOf(count)));
@@ -202,6 +203,28 @@ public class MeetAroundBot extends PlatformApiAware {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(fromId)), new Update().set("lang", "it"),
 					MeetUser.class);
 			client.sendLocationRequest(chatId, messages.getMessage("it", "lang"), messages.getMessage("it", "sendloc"));
+		}
+	}
+
+	@BotCommand("/broadcast")
+	public void broadcast(ObjectNode json, String command) {
+		log.debug("broadcast start");
+		String id = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
+		if (id.equals("148883640")) {
+			List<MeetUser> users = mongoTemplate.findAll(MeetUser.class);
+			for (MeetUser muser : users) {
+				MeetRequests requests = mongoTemplate.findById(muser.getId(), MeetRequests.class);
+				int count = 0;
+				if (requests != null) {
+					count = requests.getRequests().length;
+				}
+				client.sendMessage(muser.getChatId(),
+						messages.getMessage(muser.getLang(), "broadcast", String.valueOf(count)));
+			}
+		} else {
+			client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "unknown"));
 		}
 	}
 

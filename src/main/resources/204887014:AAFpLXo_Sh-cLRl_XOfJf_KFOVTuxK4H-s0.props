@@ -14,6 +14,7 @@ en.requested=You already sent a connection request to to {}
 en.help=This bot can help you meet people checking in around you using the same bot.\nJust send your location to check in.\n\nEach time you find someone different and send a connection request you gain an hit point. Every hit point makes the check in area larger and increase the chance to meet more people, so try it with your friends and share!\n\nAvailable commands:\n\n/stop - exit this bot\n/settings - switch language\n/help - show this help\n\nShare bot on Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 en.wait=Please wait 5 minutes before updating your location.
 en.unknown=Unknown command. To start send your location using the button below or the attachment function (paperclip icon).
+en.broadcast=Thank you for using Meet Around Bot! We are introducing a new feature to help you meet more people: hit points! You currently have {} hit points. To know more about hit points click /help
 
 it.welcome=Ciao {}!
 it.intro=Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato (simbolo graffetta). Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua o /help per saperne di più su come guadagnare punti!
@@ -31,3 +32,4 @@ it.requested=Hai già inviato una richiesta di contatto a {}
 it.help=Questo bot può aiutarti a trovare persone che si registrano vicino a te con lo stesso bot.\nBasta inviare la posizione per registrarsi.\n\nOgni volta che trovi qualcuno e gli mandi una richiesta guadagni un punto incontro. Ogni punto incontro aumenta l'area della tua registrazione e aumenta la possibilità di incontrare persone, quindi prova con i tuoi amici e condividi!\n\nComandi disponibili:\n\n/stop - esci da questo bot\n/settings - cambia lingua\n/help - mostra questo messaggio\n\nCondividi questo bot su Facebook: https://goo.gl/71AkEz\n\nFeedback: infieri@hotmail.com
 it.wait=Per favore aspetta 5 minuti prima di aggiornare la tua posizione.
 it.unknown=Comando sconosciuto. Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato (simbolo graffetta).
+it.broadcast=Grazie di usare Meet Around Bot! Stiamo introducendo una nuova funzionalità per aiutarti ad incontrare più persone: i punti incontro! Al momento hai {} punti incontro. Per saperne di più sui punti incontro clicca /help
