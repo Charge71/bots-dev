@@ -220,8 +220,13 @@ public class MeetAroundBot extends PlatformApiAware {
 				if (requests != null) {
 					count = requests.getRequests().length;
 				}
-				client.sendMessage(muser.getChatId(),
+				ObjectNode res = client.sendMessage(muser.getChatId(),
 						messages.getMessage(muser.getLang(), "broadcast", String.valueOf(count)));
+				if (res == null) {
+					log.debug("Broadcast " + muser.getId() + " 403");
+				} else {
+					log.debug("Broadcast " + muser.getId() + " OK");
+				}
 			}
 		} else {
 			client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "unknown"));
