@@ -64,7 +64,7 @@ public class BusMilanoBot extends PlatformApiAware {
 		log.debug("/preferite start");
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
-		service.listFavorites(client, chatId, userId);
+		service.listFavoritesTelegram(client, chatId, userId);
 	}
 
 	@BotCommand("default")

@@ -131,7 +131,7 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void listFavorites(ApiClient client, String chatId, String userId) {
+	public void listFavoritesTelegram(ApiClient client, String chatId, String userId) {
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
 			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
 			if (favorites.getStops() != null && favorites.getStops().length > 0) {
@@ -143,6 +143,37 @@ public class BusMilanoBotService {
 				client.sendMessage(chatId, message.toString());
 				client.sendMarkdownMessage(chatId,
 						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)");
+			} else {
+				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+			}
+		} else {
+			client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+		}
+	}
+
+	public void listFavoritesMessenger(ApiClient client, String chatId, String userId) {
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
+			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
+			if (favorites.getStops() != null && favorites.getStops().length > 0) {
+				ObjectNode response = JsonNodeFactory.instance.objectNode();
+				ObjectNode message = response.putObject("message");
+				ObjectNode attachment = message.putObject("attachment");
+				attachment.put("type", "template");
+				ObjectNode payload = attachment.putObject("payload");
+				payload.put("template_type", "generic");
+				ArrayNode elements = payload.putArray("elements");
+				for (BusMilanoStop stop : favorites.getStops()) {
+					ObjectNode element = elements.addObject();
+					element.put("title", stop.getName());
+					ArrayNode buttons = element.putArray("buttons");
+					ObjectNode button1 = buttons.addObject();
+					button1.put("type", "postback");
+					button1.put("title", "info");
+					button1.put("payload", "stop" + stop.getId());
+				}
+				client.sentStructuredMessage(chatId, response);
+				client.sendMessage(chatId,
+						"Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici!");
 			} else {
 				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
 			}
@@ -265,6 +296,10 @@ public class BusMilanoBotService {
 			button1.put("title", "rimuovi preferita");
 			button1.put("payload", "unfav" + stopId);
 		}
+		ObjectNode button2 = buttons.addObject();
+		button2.put("type", "postback");
+		button2.put("title", "lista preferite");
+		button2.put("payload", "favourites");
 		return response;
 	}
 

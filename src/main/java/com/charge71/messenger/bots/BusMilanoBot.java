@@ -35,4 +35,19 @@ public class BusMilanoBot extends PlatformApiAware {
 		String stopId = postback.substring(3);
 		service.addFavorite(client, stopId, chatId, userId);
 	}
+
+	@BotPostback(value = "unfav", isPrefix = true)
+	public void unfav(ObjectNode json, String postback) {
+		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
+		String userId = "M" + chatId;
+		String stopId = postback.substring(3);
+		service.removeFavorite(client, stopId, chatId, userId);
+	}
+
+	@BotPostback("favourites")
+	public void favourites(ObjectNode json, String postback) {
+		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
+		String userId = "M" + chatId;
+		service.listFavoritesMessenger(client, chatId, userId);
+	}
 }
