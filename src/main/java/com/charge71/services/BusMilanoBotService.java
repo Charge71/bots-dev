@@ -259,6 +259,11 @@ public class BusMilanoBotService {
 			ObjectNode element = elements.addObject();
 			element.put("title", "Linea " + lineCode + " " + lineDescription);
 			element.put("subtitle", "Attesa: " + waitMessage);
+			ArrayNode buttons = element.putArray("buttons");
+			ObjectNode button1 = buttons.addObject();
+			button1.put("type", "web_url");
+			button1.put("title", "orari");
+			button1.put("url", line.get("BookletUrl").asText());
 		}
 		return response;
 	}
