@@ -158,7 +158,7 @@ public class BusMilanoBotService {
 			client.sendMessage(chatId, "Fermata " + response.get("StopPoint").get("Description"));
 			ObjectNode message = getResponseMessageMessenger(response, stopId, userId);
 			client.sentStructuredMessage(chatId, message);
-			message = getResponseButtonsMessenger(stopId, userId);
+			message = getResponseButtonsMessenger(response, stopId, userId);
 			client.sentStructuredMessage(chatId, message);
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
@@ -246,13 +246,14 @@ public class BusMilanoBotService {
 		return result;
 	}
 
-	private ObjectNode getResponseButtonsMessenger(String stopId, String id) {
+	private ObjectNode getResponseButtonsMessenger(ObjectNode json, String stopId, String id) {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
 		ObjectNode attachment = message.putObject("attachment");
 		attachment.put("type", "template");
 		ObjectNode payload = attachment.putObject("payload");
 		payload.put("template_type", "button");
+		payload.put("text", "Fermata " + json.get("StopPoint").get("Description"));
 		ArrayNode buttons = payload.putArray("buttons");
 		ObjectNode button1 = buttons.addObject();
 		button1.put("type", "postback");
