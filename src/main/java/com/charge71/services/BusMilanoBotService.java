@@ -247,7 +247,7 @@ public class BusMilanoBotService {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
 		message.put("text", "Fermata " + json.get("StopPoint").get("Description"));
-		ObjectNode attachment = response.putObject("attachment");
+		ObjectNode attachment = message.putObject("attachment");
 		attachment.put("type", "template");
 		ObjectNode payload = attachment.putObject("payload");
 		payload.put("template_type", "generic");
