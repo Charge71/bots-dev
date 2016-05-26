@@ -172,8 +172,8 @@ public class BusMilanoBotService {
 					button1.put("payload", "stop" + stop.getId());
 				}
 				client.sentStructuredMessage(chatId, response);
-				client.sendMessage(chatId,
-						"Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici!");
+//				client.sendMessage(chatId,
+//						"Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici!");
 			} else {
 				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
 			}
