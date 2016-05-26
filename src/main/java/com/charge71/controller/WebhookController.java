@@ -104,7 +104,7 @@ public class WebhookController {
 			log.info("Default message");
 			messengerDispatcher.exec(name, null, json);
 		} else if (json.get("entry").get(0).get("messaging").get(0).get("postback") != null) {
-			String postback = json.get("entry").get(0).get("messaging").get(0).get("postback").asText();
+			String postback = json.get("entry").get(0).get("messaging").get(0).get("postback").get("payload").asText();
 			log.info("Postback: " + postback);
 			messengerDispatcher.exec(name, postback, json);
 		}
