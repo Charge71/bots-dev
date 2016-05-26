@@ -264,6 +264,16 @@ public class BusMilanoBotService {
 			button1.put("type", "web_url");
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
+			ObjectNode button2 = buttons.addObject();
+			button2.put("type", "postback");
+			if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+					BusMilanoFavorites.class)) {
+				button2.put("title", "aggiungi ai preferiti");
+				button2.put("payload", "fav" + stopId);
+			} else {
+				button2.put("title", "rimuovi dai preferiti");
+				button2.put("payload", "unfav" + stopId);
+			}
 		}
 		return response;
 	}

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.messengerapi.annotations.BotMessage;
+import com.charge71.messengerapi.annotations.BotPostback;
 import com.charge71.messengerapi.annotations.MessengerBot;
 import com.charge71.services.BusMilanoBotService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,5 +26,13 @@ public class BusMilanoBot extends PlatformApiAware {
 		String userId = "M" + chatId;
 		service.createUser(client, userId, chatId);
 		service.sendStopInfoMessenger(client, chatId, text, userId);
+	}
+
+	@BotPostback(value = "fav", isPrefix = true)
+	public void fav(ObjectNode json, String postback) {
+		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
+		String userId = "M" + chatId;
+		String stopId = postback.substring(3);
+		service.addFavorite(client, stopId, chatId, userId);
 	}
 }

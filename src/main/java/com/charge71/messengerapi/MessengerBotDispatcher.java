@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.charge71.framework.PlatformApiAware;
-import com.charge71.lang.MessageHelper;
 import com.charge71.messengerapi.annotations.BotMessage;
 import com.charge71.messengerapi.annotations.BotPostback;
 import com.charge71.messengerapi.annotations.MessengerBot;
@@ -66,7 +65,6 @@ public class MessengerBotDispatcher {
 				}
 				if (bot instanceof PlatformApiAware) {
 					((PlatformApiAware) bot).setClient(new MessengerApiClient(token));
-					//((PlatformApiAware) bot).setMessages(new MessageHelper(token));
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
