@@ -28,6 +28,16 @@ public class BusMilanoBot extends PlatformApiAware {
 		service.sendStopInfoMessenger(client, chatId, text, userId);
 	}
 
+	@BotPostback(value = "stop", isPrefix = true)
+	public void stop(ObjectNode json, String postback) {
+		log.debug("message start");
+		String text = postback.substring(4);
+		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
+		String userId = "M" + chatId;
+		service.createUser(client, userId, chatId);
+		service.sendStopInfoMessenger(client, chatId, text, userId);
+	}
+	
 	@BotPostback(value = "fav", isPrefix = true)
 	public void fav(ObjectNode json, String postback) {
 		log.debug("fav start");
@@ -42,7 +52,7 @@ public class BusMilanoBot extends PlatformApiAware {
 		log.debug("unfav start");
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
-		String stopId = postback.substring(3);
+		String stopId = postback.substring(5);
 		service.removeFavorite(client, stopId, chatId, userId);
 	}
 
