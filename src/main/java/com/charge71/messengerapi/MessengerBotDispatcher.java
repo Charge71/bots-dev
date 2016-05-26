@@ -97,11 +97,11 @@ public class MessengerBotDispatcher {
 					log.debug("Not found postback " + postback + " for bot " + bot);
 					return;
 				}
-				try {
-					method.invoke(bot, json, postback);
-				} catch (Exception e) {
-					log.error("BotDispatcher error for postback " + postback, e);
-				}
+			}
+			try {
+				method.invoke(bot, json, postback);
+			} catch (Exception e) {
+				log.error("BotDispatcher error for postback " + postback, e);
 			}
 		} else {
 			Method method = messages.get(botname);
