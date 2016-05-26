@@ -155,6 +155,7 @@ public class BusMilanoBotService {
 		try {
 			Long.parseLong(stopId);
 			ObjectNode response = getInfo(stopId);
+			client.sendMessage(chatId, "Fermata " + response.get("StopPoint").get("Description"));
 			ObjectNode message = getResponseMessageMessenger(response, stopId, userId);
 			client.sentStructuredMessage(chatId, message);
 		} catch (NumberFormatException e) {
@@ -246,7 +247,6 @@ public class BusMilanoBotService {
 	private ObjectNode getResponseMessageMessenger(ObjectNode json, String stopId, String id) {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
-		message.put("text", "Fermata " + json.get("StopPoint").get("Description"));
 		ObjectNode attachment = message.putObject("attachment");
 		attachment.put("type", "template");
 		ObjectNode payload = attachment.putObject("payload");
