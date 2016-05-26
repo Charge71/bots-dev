@@ -30,6 +30,7 @@ public class BusMilanoBot extends PlatformApiAware {
 
 	@BotPostback(value = "fav", isPrefix = true)
 	public void fav(ObjectNode json, String postback) {
+		log.debug("fav start");
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		String stopId = postback.substring(3);
@@ -38,6 +39,7 @@ public class BusMilanoBot extends PlatformApiAware {
 
 	@BotPostback(value = "unfav", isPrefix = true)
 	public void unfav(ObjectNode json, String postback) {
+		log.debug("unfav start");
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		String stopId = postback.substring(3);
@@ -46,6 +48,7 @@ public class BusMilanoBot extends PlatformApiAware {
 
 	@BotPostback("favourites")
 	public void favourites(ObjectNode json, String postback) {
+		log.debug("favourites start");
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.listFavoritesMessenger(client, chatId, userId);
