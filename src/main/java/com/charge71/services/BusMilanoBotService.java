@@ -158,6 +158,8 @@ public class BusMilanoBotService {
 			client.sendMessage(chatId, "Fermata " + response.get("StopPoint").get("Description"));
 			ObjectNode message = getResponseMessageMessenger(response, stopId, userId);
 			client.sentStructuredMessage(chatId, message);
+			message = getResponseButtonsMessenger(stopId, userId);
+			client.sentStructuredMessage(chatId, message);
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
@@ -244,6 +246,27 @@ public class BusMilanoBotService {
 		return result;
 	}
 
+	private ObjectNode getResponseButtonsMessenger(String stopId, String id) {
+		ObjectNode response = JsonNodeFactory.instance.objectNode();
+		ObjectNode message = response.putObject("message");
+		ObjectNode attachment = message.putObject("attachment");
+		attachment.put("type", "template");
+		ObjectNode payload = attachment.putObject("payload");
+		payload.put("template_type", "button");
+		ArrayNode buttons = payload.putArray("buttons");
+		ObjectNode button1 = buttons.addObject();
+		button1.put("type", "postback");
+		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+				BusMilanoFavorites.class)) {
+			button1.put("title", "aggiungi preferita");
+			button1.put("payload", "fav" + stopId);
+		} else {
+			button1.put("title", "rimuovi preferita");
+			button1.put("payload", "unfav" + stopId);
+		}
+		return response;
+	}
+
 	private ObjectNode getResponseMessageMessenger(ObjectNode json, String stopId, String id) {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
@@ -264,16 +287,6 @@ public class BusMilanoBotService {
 			button1.put("type", "web_url");
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
-			ObjectNode button2 = buttons.addObject();
-			button2.put("type", "postback");
-			if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
-					BusMilanoFavorites.class)) {
-				button2.put("title", "aggiungi ai preferiti");
-				button2.put("payload", "fav" + stopId);
-			} else {
-				button2.put("title", "rimuovi dai preferiti");
-				button2.put("payload", "unfav" + stopId);
-			}
 		}
 		return response;
 	}
