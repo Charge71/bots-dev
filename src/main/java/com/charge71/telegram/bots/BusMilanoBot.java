@@ -73,7 +73,7 @@ public class BusMilanoBot extends PlatformApiAware {
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = json.get("message").get("text").asText();
-		service.sendStopInfo(client, chatId, stopId, userId);
+		service.sendStopInfoTelegram(client, chatId, stopId, userId);
 	}
 
 	@BotCommand(value = "/ferm", isPrefix = true)
@@ -82,7 +82,7 @@ public class BusMilanoBot extends PlatformApiAware {
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = command.substring(5);
-		service.sendStopInfo(client, chatId, stopId, userId);
+		service.sendStopInfoTelegram(client, chatId, stopId, userId);
 	}
 
 	@BotCommand("/stop")

@@ -20,6 +20,8 @@ import com.charge71.model.BusMilanoFavorites;
 import com.charge71.model.BusMilanoFavorites.BusMilanoStop;
 import com.charge71.model.BusMilanotUser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class BusMilanoBotService {
@@ -139,7 +141,8 @@ public class BusMilanoBotService {
 					message.append(" (rimuovi /unfav" + stop.getId() + ")");
 				}
 				client.sendMessage(chatId, message.toString());
-				client.sendMarkdownMessage(chatId, "_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)");
+				client.sendMarkdownMessage(chatId,
+						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)");
 			} else {
 				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
 			}
@@ -148,7 +151,32 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void sendStopInfo(ApiClient client, String chatId, String stopId, String userId) {
+	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
+		try {
+			Long.parseLong(stopId);
+			ObjectNode response = getInfo(stopId);
+			ObjectNode message = getResponseMessageMessenger(response, stopId, userId);
+			client.sentStructuredMessage(chatId, message);
+		} catch (NumberFormatException e) {
+			client.sendMessage(chatId,
+					"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+				client.sendMessage(chatId,
+						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			} else {
+				log.error("Errore su codice: " + stopId, e);
+				client.sendMessage(chatId,
+						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			}
+		} catch (RestClientException e) {
+			log.error("Errore su codice: " + stopId, e);
+			client.sendMessage(chatId,
+					"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+		}
+	}
+
+	public void sendStopInfoTelegram(ApiClient client, String chatId, String stopId, String userId) {
 		try {
 			Long.parseLong(stopId);
 			ObjectNode response = getInfo(stopId);
@@ -215,4 +243,23 @@ public class BusMilanoBotService {
 		return result;
 	}
 
+	private ObjectNode getResponseMessageMessenger(ObjectNode json, String stopId, String id) {
+		ObjectNode response = JsonNodeFactory.instance.objectNode();
+		ObjectNode message = response.putObject("message");
+		message.put("text", "Fermata " + json.get("StopPoint").get("Description"));
+		ObjectNode attachment = response.putObject("attachment");
+		attachment.put("type", "template");
+		ObjectNode payload = attachment.putObject("payload");
+		payload.put("template_type", "generic");
+		ArrayNode elements = payload.putArray("elements");
+		for (JsonNode line : json.get("Lines")) {
+			String lineCode = line.get("Line").get("LineCode").asText();
+			String lineDescription = line.get("Line").get("LineDescription").asText();
+			String waitMessage = line.get("WaitMessage").isNull() ? "-" : line.get("WaitMessage").asText();
+			ObjectNode element = elements.addObject();
+			element.put("title", "Linea " + lineCode + " " + lineDescription);
+			element.put("subtitle", "Attesa: " + waitMessage);
+		}
+		return response;
+	}
 }

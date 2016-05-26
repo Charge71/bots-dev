@@ -19,4 +19,6 @@ public interface ApiClient {
 	public ObjectNode getUserProfilePhoto(String userId);
 
 	public ObjectNode getUserInfo(String userId);
+	
+	public ObjectNode sentStructuredMessage(String chatId, ObjectNode objectNode);
 }

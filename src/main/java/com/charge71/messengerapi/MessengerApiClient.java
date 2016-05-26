@@ -45,18 +45,8 @@ public class MessengerApiClient implements ApiClient {
 
 	@Override
 	public ObjectNode sendMarkdownMessage(String chatId, String text) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
-				.path("/me/messages").queryParam("access_token", token);
-		// String message = "{\"recipient\":{\"id\":\"" + chatId +
-		// "\"},\"message\":{\"text\":\"" + text + "\"}}";
-		ObjectNode msgNode = factory.objectNode();
-		msgNode.putObject("recipient").put("id", chatId);
-		msgNode.putObject("message").put("text", text);
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<String> entity = new HttpEntity<String>(msgNode.toString(), headers);
-		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
-				.getBody();
+		// unused
+		return null;
 	}
 
 	@Override
@@ -94,6 +84,18 @@ public class MessengerApiClient implements ApiClient {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION).path("/")
 				.path(userId).queryParam("access_token", token);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+	}
+
+	@Override
+	public ObjectNode sentStructuredMessage(String chatId, ObjectNode objectNode) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
+				.path("/me/messages").queryParam("access_token", token);
+		objectNode.putObject("recipient").put("id", chatId);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(objectNode.toString(), headers);
+		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
+				.getBody();
 	}
 
 }

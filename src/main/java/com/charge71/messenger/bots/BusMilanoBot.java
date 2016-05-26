@@ -24,6 +24,6 @@ public class BusMilanoBot extends PlatformApiAware {
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.createUser(client, userId, chatId);
-		service.sendStopInfo(client, chatId, text, userId);
+		service.sendStopInfoMessenger(client, chatId, text, userId);
 	}
 }

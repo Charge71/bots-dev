@@ -91,4 +91,10 @@ public class TelegramApiClient implements ApiClient {
 		return "{\"inline_keyboard\":[[{\"text\":\"English\",\"callback_data\":\"lang_en\"},{\"text\":\"Italiano\",\"callback_data\":\"lang_it\"}]]}";
 	}
 
+	@Override
+	public ObjectNode sentStructuredMessage(String chatId, ObjectNode objectNode) {
+		// unused
+		return null;
+	}
+
 }
