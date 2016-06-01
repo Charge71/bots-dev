@@ -15,6 +15,7 @@ en.help=This bot can help you meet people checking in around you using the same 
 en.wait=Please wait 5 minutes before updating your location.
 en.unknown=Unknown command. To start send your location using the button below or the attachment function (paperclip icon).
 en.broadcast=Thank you for using Meet Around Bot! We are introducing a new feature to help you meet more people: hit points! You currently have {} hit points. To know more about hit points click /help
+en.stopped=You are not subscribed to this bot, please click /start
 
 it.welcome=Ciao {}!
 it.intro=Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato (simbolo graffetta). Nota che fecendo questo accetti di condivicere il tuo nome proprio e la tua immagine del profilo. Clicca /settings per cambiare lingua o /help per saperne di più su come guadagnare punti!
@@ -33,3 +34,4 @@ it.help=Questo bot può aiutarti a trovare persone che si registrano vicino a te
 it.wait=Per favore aspetta 5 minuti prima di aggiornare la tua posizione.
 it.unknown=Comando sconosciuto. Per iniziare invia la tua posizione usando il tasto in basso o la funzione allegato (simbolo graffetta).
 it.broadcast=Grazie di usare Meet Around Bot! Stiamo introducendo una nuova funzionalità per aiutarti ad incontrare più persone: i punti incontro! Al momento hai {} punti incontro. Per saperne di più sui punti incontro clicca /help
+it.stopped=Non sei abbonato a questo bot, per favore clicca /start

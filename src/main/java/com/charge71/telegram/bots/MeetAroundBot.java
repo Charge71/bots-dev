@@ -139,6 +139,11 @@ public class MeetAroundBot extends PlatformApiAware {
 		log.debug("location start");
 		String id = json.get("message").get("from").get("id").asText();
 		MeetUser myself = mongoTemplate.findById(id, MeetUser.class);
+		if (myself == null) {
+			String chatId = json.get("message").get("chat").get("id").asText();
+			client.sendMessage(chatId, messages.getMessage("en", "stopped"));
+			return;
+		}
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("from").get("username") == null) {
 			client.sendMessage(chatId, messages.getMessage(myself == null ? "en" : myself.getLang(), "nousername"));
