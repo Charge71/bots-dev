@@ -1,9 +1,12 @@
 package com.charge71.messengerapi;
 
+import java.nio.charset.Charset;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +28,7 @@ public class MessengerApiClient implements ApiClient {
 
 	MessengerApiClient(String token) {
 		this.token = token;
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 	}
 
 	@Override
