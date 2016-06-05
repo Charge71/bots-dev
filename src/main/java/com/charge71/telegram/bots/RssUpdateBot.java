@@ -84,12 +84,13 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (json.get("message").get("reply_to_message") != null) {
+
+			log.debug(json.get("message").get("reply_to_message").get("text"));
+			log.debug(messages.getMessage(user.getLang(), "add"));
+
 			if (json.get("message").get("reply_to_message").get("text")
 					.equals(messages.getMessage(user.getLang(), "add"))) {
-				
-				log.debug(json.get("message").get("reply_to_message").get("text"));
-				log.debug(messages.getMessage(user.getLang(), "add"));
-				
+
 				// add
 				String url = json.get("message").get("text").asText();
 				try {
