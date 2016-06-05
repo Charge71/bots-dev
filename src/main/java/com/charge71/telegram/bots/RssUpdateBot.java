@@ -97,9 +97,8 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			RssFeed[] feeds = subs.getFeeds();
 			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
 			ArrayNode b1 = buttons.putArray("inline_keyboard");
-			ArrayNode b2 = b1.addArray();
 			for (int i = 0; i < feeds.length; i++) {
-				ObjectNode btn = b2.addObject();
+				ObjectNode btn = b1.addArray().addObject();
 				btn.put("text", feeds[i].getName());
 				btn.put("callback_data", "remove_" + i);
 			}
