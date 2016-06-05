@@ -7,4 +7,4 @@ en.rssremove=Removed feed {}.
 en.nofav=You have no subscriptions.
 en.maxfav=You can't have more than four subscriptions.
 en.already=You already subscribed to {}.
-en.help=This bot lets you subscribe to up to four RSS feeds updates. Available commands:\n\n/add Add new subscription.\n/remove Remove a subscription.\n/stop Exit bot.\n/help Shows this message.
+en.help=This bot lets you subscribe to up to four RSS feeds updates.\n\nAvailable commands:\n\n/add Add new subscription.\n/remove Remove a subscription.\n/stop Exit bot.\n/help Shows this message.
