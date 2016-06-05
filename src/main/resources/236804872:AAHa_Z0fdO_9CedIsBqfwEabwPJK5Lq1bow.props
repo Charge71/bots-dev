@@ -1,2 +1,4 @@
 en.start=Welcome {}! This bot let you subscribe to RSS feeds updates. Click /add to add new subscriptions.
 en.add=Please enter the address of the RSS feed to add.
+en.rsserror=There was an error adding RSS feed.
+en.rssadd=Added feed {}.

@@ -6,7 +6,7 @@ public interface ApiClient {
 
 	public ObjectNode sendMessage(String chatId, String text);
 
-	public ObjectNode sendMarkdownMessage(String chatId, String text);
+	public ObjectNode sendMarkdownMessage(String chatId, String text, boolean disablePreview);
 
 	public ObjectNode sendLocationRequest(String chatId, String text, String request);
 	

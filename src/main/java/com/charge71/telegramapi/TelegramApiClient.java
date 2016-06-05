@@ -34,10 +34,10 @@ public class TelegramApiClient implements ApiClient {
 		}
 	}
 
-	public ObjectNode sendMarkdownMessage(String chatId, String text) {
+	public ObjectNode sendMarkdownMessage(String chatId, String text, boolean disablePreview) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
 				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("parse_mode", "Markdown")
-				.queryParam("disable_web_page_preview", true);
+				.queryParam("disable_web_page_preview", disablePreview);
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 

@@ -35,7 +35,7 @@ public class RssService {
 	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	public static interface RssHandler {
-		public void handle(String link);
+		public void handle(String chatId, String title, String link);
 	}
 
 	private class RssChecker implements Runnable {
@@ -49,7 +49,7 @@ public class RssService {
 				for (RssFeed feed : feeds) {
 					try {
 						log.debug("Checking " + feed.getUrl());
-						Date date = updateRss(feed.getUrl(), feed.getLast(), rssHandler);
+						Date date = updateRss(user.getChatId(), feed.getUrl(), feed.getLast(), rssHandler);
 						if (date.after(feed.getLast())) {
 							updateDate(user.getId(), feed.getUrl(), date);
 						}
@@ -89,7 +89,7 @@ public class RssService {
 				Update.update("feeds.$.last", date), RssSubscriptions.class);
 	}
 
-	public static Date initRss(String url) throws Exception {
+	public static RssFeed initRss(String url) throws Exception {
 
 		Date last = null;
 
@@ -103,12 +103,16 @@ public class RssService {
 				}
 			}
 
-			return last;
+			RssFeed rssfeed = new RssFeed();
+			rssfeed.setLast(last);
+			rssfeed.setName(feed.getTitle());
+			rssfeed.setUrl(url);
+			return rssfeed;
 		}
 
 	}
 
-	public static Date updateRss(String url, Date last, RssHandler handler) throws Exception {
+	public static Date updateRss(String chatId, String url, Date last, RssHandler handler) throws Exception {
 
 		try (InputStream is = new URL(url).openStream()) {
 			SyndFeedInput input = new SyndFeedInput();
@@ -117,7 +121,7 @@ public class RssService {
 			for (SyndEntry entry : feed.getEntries()) {
 				if (entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
-					handler.handle(entry.getLink());
+					handler.handle(chatId, entry.getTitle(), entry.getLink());
 				}
 			}
 

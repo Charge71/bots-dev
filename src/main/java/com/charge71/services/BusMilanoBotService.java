@@ -142,7 +142,7 @@ public class BusMilanoBotService {
 				}
 				client.sendMessage(chatId, message.toString());
 				client.sendMarkdownMessage(chatId,
-						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)");
+						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)", true);
 			} else {
 				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
 			}
@@ -216,7 +216,7 @@ public class BusMilanoBotService {
 			ObjectNode response = getInfo(stopId);
 			List<String> list = getResponseMessage(response, stopId, userId);
 			for (String message : list) {
-				client.sendMarkdownMessage(chatId, message);
+				client.sendMarkdownMessage(chatId, message, true);
 			}
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,

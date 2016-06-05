@@ -3,9 +3,14 @@ package com.charge71.telegram.bots;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
+import com.charge71.model.RssSubscriptions;
+import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
 import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
@@ -31,9 +36,8 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 	}
 
 	@Override
-	public void handle(String link) {
-		// TODO Auto-generated method stub
-
+	public void handle(String chatId, String title, String link) {
+		client.sendMarkdownMessage(chatId, "[" + title + "](" + link + ")", false);
 	}
 
 	@BotCommand("/start")
@@ -71,5 +75,38 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add", user.getFirstName()));
+	}
+
+	@BotCommand("default")
+	public void def(ObjectNode json, String command) {
+		log.debug("default start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		String userId = json.get("message").get("from").get("id").asText();
+		RssUser user = mongoTemplate.findById(userId, RssUser.class);
+		if (json.get("message").get("reply_to_message") != null) {
+			if (json.get("message").get("reply_to_message").get("text")
+					.equals(messages.getMessage(user.getLang(), "add", user.getFirstName()))) {
+				// add
+				String url = json.get("message").get("text").asText();
+				try {
+					RssFeed feed = RssService.initRss(url);
+					RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
+					if (subs != null) {
+						mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userId)),
+								new Update().push("feeds", feed), RssSubscriptions.class);
+					} else {
+						subs = new RssSubscriptions();
+						subs.setId(userId);
+						subs.setFeeds(new RssFeed[] { feed });
+						mongoTemplate.save(subs);
+					}
+					log.debug("Added feed " + feed.getName());
+					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssadd", feed.getName()));
+				} catch (Exception e) {
+					log.error("RSS init error.", e);
+					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rsserror"));
+				}
+			}
+		}
 	}
 }

@@ -48,7 +48,7 @@ public class MessengerApiClient implements ApiClient {
 	}
 
 	@Override
-	public ObjectNode sendMarkdownMessage(String chatId, String text) {
+	public ObjectNode sendMarkdownMessage(String chatId, String text, boolean disablePreview) {
 		// unused
 		return null;
 	}
