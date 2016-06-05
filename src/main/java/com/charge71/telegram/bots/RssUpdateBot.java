@@ -1,5 +1,6 @@
 package com.charge71.telegram.bots;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
-import com.charge71.model.MeetUser;
 import com.charge71.model.RssSubscriptions;
 import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
@@ -100,11 +100,24 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		}
 	}
-	
+
 	@BotCommand("callback")
 	public void callback(ObjectNode json, String command) {
 		log.debug("callback start");
-		//TODO
+		String chatId = json.get("callback_query").get("message").get("chat").get("id").asText();
+		String fromId = json.get("callback_query").get("from").get("id").asText();
+		RssUser user = mongoTemplate.findById(fromId, RssUser.class);
+		String data = json.get("callback_query").get("data").asText();
+		if (data.startsWith("remove_")) {
+			int index = Integer.parseInt(data.substring(7));
+			RssSubscriptions subs = mongoTemplate.findById(fromId, RssSubscriptions.class);
+			RssFeed[] feeds = subs.getFeeds();
+			RssFeed feed = subs.getFeeds()[index];
+			subs.setFeeds(ArrayUtils.remove(feeds, index));
+			mongoTemplate.save(subs);
+			client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()));
+			log.debug("Removed " + feed.getUrl() + " from " + fromId);
+		}
 	}
 
 	@BotCommand("default")
