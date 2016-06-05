@@ -56,11 +56,11 @@ public class TelegramBotDispatcher {
 						}
 					}
 				}
+				beanFactory.autowireBean(bot);
 				if (bot instanceof PlatformApiAware) {
 					((PlatformApiAware) bot).setClient(new TelegramApiClient(token));
 					((PlatformApiAware) bot).setMessages(new MessageHelper(token));
 				}
-				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
 				log.debug("Commands: " + methods.get(token).keySet());
 				log.debug("Prefix commands: " + prefixMethods.get(token).keySet());
