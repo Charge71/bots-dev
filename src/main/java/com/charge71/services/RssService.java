@@ -42,24 +42,24 @@ public class RssService {
 
 		@Override
 		public void run() {
-			log.info("RssChecker starting...");
+			//log.info("RssChecker starting...");
 			List<RssUser> users = getUsers();
 			for (RssUser user : users) {
 				RssFeed[] feeds = getFeeds(user.getId());
 				for (RssFeed feed : feeds) {
 					try {
-						log.debug("Checking " + feed.getUrl());
+						//log.debug("Checking " + feed.getUrl());
 						Date date = updateRss(user.getChatId(), feed.getUrl(), feed.getLast(), rssHandler);
 						if (date.after(feed.getLast())) {
 							updateDate(user.getId(), feed.getUrl(), date);
 						}
-						log.debug("Done " + feed.getUrl());
+						//log.debug("Done " + feed.getUrl());
 					} catch (Exception e) {
 						log.error("Error checking " + feed.getUrl(), e);
 					}
 				}
 			}
-			log.info("RssChecker finished.");
+			//log.info("RssChecker finished.");
 		}
 
 	}

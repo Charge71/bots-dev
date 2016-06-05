@@ -40,6 +40,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 
 	@Override
 	public void handle(String chatId, String title, String link) {
+		log.debug("Handle " + link);
 		client.sendMarkdownMessage(chatId, "[" + title + "](" + link + ")", false);
 	}
 
@@ -98,6 +99,8 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 				btn.put("callback_data", "remove_" + i);
 			}
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
+		} else {
+			client.sendMessage(chatId, messages.getMessage(user.getLang(), "nofav", user.getFirstName()));
 		}
 	}
 
@@ -145,7 +148,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 						subs.setFeeds(new RssFeed[] { feed });
 						mongoTemplate.save(subs);
 					}
-					log.debug("Added feed " + feed.getName());
+					log.debug("Added feed " + feed.getName() + " to " + userId);
 					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssadd", feed.getName()));
 				} catch (Exception e) {
 					log.error("RSS init error.", e);

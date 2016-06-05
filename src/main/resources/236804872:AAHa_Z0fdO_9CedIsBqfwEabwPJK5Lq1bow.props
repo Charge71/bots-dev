@@ -4,3 +4,4 @@ en.rsserror=There was an error adding RSS feed.
 en.rssadd=Added feed {}.
 en.remove=Please choose the feed to remove.
 en.rssremove=Removed feed {}.
+en.nofav=You have no subscriptions.
