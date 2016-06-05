@@ -9,10 +9,12 @@
 			<list>
 				<value>com.charge71.telegram.bots.MeetAroundBot</value>
 				<value>com.charge71.telegram.bots.BusMilanoBot</value>
+				<value>com.charge71.telegram.bots.RssBot</value>
 			</list>
 		</property>
 	</bean>
 	
 	<bean class="com.charge71.services.BusMilanoBotService"/>
+	<bean class="com.charge71.services.RssService" destroy-method="destroy"/>
 	
 </beans>
