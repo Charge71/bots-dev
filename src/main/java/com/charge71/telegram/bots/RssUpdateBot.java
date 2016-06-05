@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
+import com.charge71.model.MeetUser;
 import com.charge71.model.RssSubscriptions;
 import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
@@ -98,6 +99,12 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			}
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		}
+	}
+	
+	@BotCommand("callback")
+	public void callback(ObjectNode json, String command) {
+		log.debug("callback start");
+		//TODO
 	}
 
 	@BotCommand("default")
