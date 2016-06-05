@@ -9,7 +9,7 @@
 			<list>
 				<value>com.charge71.telegram.bots.MeetAroundBot</value>
 				<value>com.charge71.telegram.bots.BusMilanoBot</value>
-				<value>com.charge71.telegram.bots.RssBot</value>
+				<value>com.charge71.telegram.bots.RssUpdateBot</value>
 			</list>
 		</property>
 	</bean>

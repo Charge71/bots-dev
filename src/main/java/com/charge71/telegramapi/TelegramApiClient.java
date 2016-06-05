@@ -13,7 +13,7 @@ public class TelegramApiClient implements ApiClient {
 	private static final String BASE_URL = "https://api.telegram.org/bot";
 
 	private final String token;
-	
+
 	private RestTemplate restTemplate = new RestTemplate();
 
 	TelegramApiClient(String token) {
@@ -48,6 +48,12 @@ public class TelegramApiClient implements ApiClient {
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
+	public ObjectNode sendForceReply(String chatId, String text) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
+				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", forceReply());
+		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+	}
+
 	public ObjectNode sendButton(String chatId, String text, String request) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
 				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", button(request));
@@ -78,6 +84,10 @@ public class TelegramApiClient implements ApiClient {
 		return null;
 	}
 	//
+
+	private String forceReply() {
+		return "{\"force_reply\":true}";
+	}
 
 	private String locationRequest(String request) {
 		return "{\"keyboard\":[[{\"text\":\"" + request + "\",\"request_location\":true}]],\"resize_keyboard\":true}";

@@ -81,7 +81,7 @@ public class RssService {
 
 	public RssFeed[] getFeeds(String userId) {
 		RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
-		return subs != null ? subs.getFeeds() : null;
+		return subs != null ? subs.getFeeds() : new RssFeed[0];
 	}
 
 	public void updateDate(String id, String url, Date date) {

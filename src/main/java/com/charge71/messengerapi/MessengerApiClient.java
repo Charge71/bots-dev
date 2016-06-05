@@ -102,4 +102,10 @@ public class MessengerApiClient implements ApiClient {
 				.getBody();
 	}
 
+	@Override
+	public ObjectNode sendForceReply(String chatId, String text) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

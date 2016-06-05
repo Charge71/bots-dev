@@ -9,6 +9,8 @@ public interface ApiClient {
 	public ObjectNode sendMarkdownMessage(String chatId, String text);
 
 	public ObjectNode sendLocationRequest(String chatId, String text, String request);
+	
+	public ObjectNode sendForceReply(String chatId, String text);
 
 	public ObjectNode sendButton(String chatId, String text, String request);
 
