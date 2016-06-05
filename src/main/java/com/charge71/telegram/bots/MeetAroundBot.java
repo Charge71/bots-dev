@@ -76,6 +76,15 @@ public class MeetAroundBot extends PlatformApiAware {
 		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
 		client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "help"));
 	}
+	
+	@BotCommand("/hints")
+	public void hints(ObjectNode json, String command) {
+		log.debug("/hints start");
+		String id = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
+		client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "hints"));
+	}
 
 	@BotCommand("/stop")
 	public void stop(ObjectNode json, String command) {
@@ -172,7 +181,7 @@ public class MeetAroundBot extends PlatformApiAware {
 		if (requests != null) {
 			count = requests.getRequests().length;
 		}
-		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(200 + (count * 10)).and("id")
+		Criteria criteria = Criteria.where("location").nearSphere(point).maxDistance(300 + (count * 10)).and("id")
 				.ne(id);
 		List<MeetLocation> list = mongoTemplate.find(Query.query(criteria), MeetLocation.class);
 		if (list.isEmpty()) {

@@ -18,7 +18,7 @@ public class MeetLocation {
 	@GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
 	private GeoJsonPoint location;
 
-	@Indexed(expireAfterSeconds = 900) // 15 minutes
+	@Indexed(expireAfterSeconds = 1200) // 20 minutes
 	private Date created;
 
 	public String getId() {
