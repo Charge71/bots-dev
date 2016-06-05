@@ -1,9 +1,10 @@
-package com.charge71.services;
+package com.charge71.telegram.bots;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
+import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
 import com.charge71.telegramapi.annotations.TelegramBot;
 
