@@ -16,6 +16,8 @@ import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("236804872:AAHa_Z0fdO_9CedIsBqfwEabwPJK5Lq1bow")
@@ -75,6 +77,27 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add"));
+	}
+
+	@BotCommand("/remove")
+	public void remove(ObjectNode json, String command) {
+		log.debug("/remove start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		String userId = json.get("message").get("from").get("id").asText();
+		RssUser user = mongoTemplate.findById(userId, RssUser.class);
+		RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
+		if (subs != null && subs.getFeeds() != null && subs.getFeeds().length > 0) {
+			RssFeed[] feeds = subs.getFeeds();
+			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
+			ArrayNode b1 = buttons.putArray("inline_keyboard");
+			ArrayNode b2 = b1.addArray();
+			for (int i = 0; i < feeds.length; i++) {
+				ObjectNode btn = b2.addObject();
+				btn.put("text", feeds[i].getName());
+				btn.put("callback_data", "remove_" + i);
+			}
+			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
+		}
 	}
 
 	@BotCommand("default")

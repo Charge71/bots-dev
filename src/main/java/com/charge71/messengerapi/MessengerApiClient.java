@@ -108,4 +108,10 @@ public class MessengerApiClient implements ApiClient {
 		return null;
 	}
 
+	@Override
+	public ObjectNode sendButtons(String chatId, String text, String buttons) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

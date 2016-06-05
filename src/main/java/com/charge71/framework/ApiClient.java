@@ -13,6 +13,8 @@ public interface ApiClient {
 	public ObjectNode sendForceReply(String chatId, String text);
 
 	public ObjectNode sendButton(String chatId, String text, String request);
+	
+	public ObjectNode sendButtons(String chatId, String text, String buttons);
 
 	public ObjectNode sendPhoto(String chatId, String fileId, String caption);
 
