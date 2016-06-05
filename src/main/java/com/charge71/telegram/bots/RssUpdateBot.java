@@ -74,7 +74,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
-		client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add", user.getFirstName()));
+		client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add"));
 	}
 
 	@BotCommand("default")
@@ -85,7 +85,11 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (json.get("message").get("reply_to_message") != null) {
 			if (json.get("message").get("reply_to_message").get("text")
-					.equals(messages.getMessage(user.getLang(), "add", user.getFirstName()))) {
+					.equals(messages.getMessage(user.getLang(), "add"))) {
+				
+				log.debug(json.get("message").get("reply_to_message").get("text"));
+				log.debug(messages.getMessage(user.getLang(), "add"));
+				
 				// add
 				String url = json.get("message").get("text").asText();
 				try {
