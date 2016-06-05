@@ -109,6 +109,29 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		}
 	}
 
+	@BotCommand("/help")
+	public void help(ObjectNode json, String command) {
+		log.debug("/help start");
+		String chatId = json.get("message").get("chat").get("id").asText();
+		String userId = json.get("message").get("from").get("id").asText();
+		RssUser user = mongoTemplate.findById(userId, RssUser.class);
+		client.sendMessage(chatId, messages.getMessage(user.getLang(), "help"));
+	}
+
+	@BotCommand("/stop")
+	public void stop(ObjectNode json, String command) {
+		log.debug("/stop start");
+		String id = json.get("message").get("from").get("id").asText();
+		RssSubscriptions subs = mongoTemplate.findById(id, RssSubscriptions.class);
+		if (subs != null) {
+			mongoTemplate.remove(subs);
+		}
+		RssUser user = mongoTemplate.findById(id, RssUser.class);
+		if (user != null) {
+			mongoTemplate.remove(user);
+		}
+	}
+
 	@BotCommand("callback")
 	public void callback(ObjectNode json, String command) {
 		log.debug("callback start");
