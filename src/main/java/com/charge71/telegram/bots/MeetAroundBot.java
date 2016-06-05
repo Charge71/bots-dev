@@ -76,7 +76,7 @@ public class MeetAroundBot extends PlatformApiAware {
 		MeetUser user = mongoTemplate.findById(id, MeetUser.class);
 		client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "help"));
 	}
-	
+
 	@BotCommand("/hints")
 	public void hints(ObjectNode json, String command) {
 		log.debug("/hints start");
@@ -238,6 +238,11 @@ public class MeetAroundBot extends PlatformApiAware {
 						messages.getMessage(muser.getLang(), "broadcast", String.valueOf(count)));
 				if (res == null) {
 					log.debug("Broadcast " + muser.getId() + " 403");
+					MeetLocation location = mongoTemplate.findById(muser.getId(), MeetLocation.class);
+					if (location != null) {
+						mongoTemplate.remove(location);
+					}
+					mongoTemplate.remove(muser);
 				} else {
 					log.debug("Broadcast " + muser.getId() + " OK");
 				}
