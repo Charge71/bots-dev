@@ -78,7 +78,12 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
-		client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add"));
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("feeds.3").exists(true)),
+				RssSubscriptions.class)) {
+			client.sendMessage(chatId, messages.getMessage(user.getLang(), "maxfav"));
+		} else {
+			client.sendForceReply(chatId, messages.getMessage(user.getLang(), "add"));
+		}
 	}
 
 	@BotCommand("/remove")
@@ -136,6 +141,11 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 
 				// add
 				String url = json.get("message").get("text").asText();
+				if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("feeds.url").is(url)),
+						RssSubscriptions.class)) {
+					client.sendMessage(chatId, messages.getMessage(user.getLang(), "already", url));
+					return;
+				}
 				try {
 					RssFeed feed = RssService.initRss(url);
 					RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
