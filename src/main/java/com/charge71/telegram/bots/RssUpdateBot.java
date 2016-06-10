@@ -39,9 +39,9 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 	}
 
 	@Override
-	public void handle(String chatId, String title, String link) {
+	public void handle(String chatId, String feedTitle, String title, String link) {
 		log.debug("Handle " + link);
-		client.sendMarkdownMessage(chatId, "[" + title + "](" + link + ")", false);
+		client.sendMarkdownMessage(chatId, feedTitle + "\n[" + title + "](" + link + ")", false);
 	}
 
 	@BotCommand("/start")

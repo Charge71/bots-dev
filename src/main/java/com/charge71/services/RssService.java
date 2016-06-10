@@ -36,7 +36,7 @@ public class RssService {
 	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	public static interface RssHandler {
-		public void handle(String chatId, String title, String link);
+		public void handle(String chatId, String feedTitle, String title, String link);
 	}
 
 	private class RssChecker implements Runnable {
@@ -126,7 +126,7 @@ public class RssService {
 			for (SyndEntry entry : feed.getEntries()) {
 				if (entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
-					handler.handle(chatId, entry.getTitle(), entry.getLink());
+					handler.handle(chatId, feed.getTitle(), entry.getTitle(), entry.getLink());
 				}
 			}
 
