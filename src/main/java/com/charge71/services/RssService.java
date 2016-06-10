@@ -1,6 +1,7 @@
 package com.charge71.services;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -114,7 +115,11 @@ public class RssService {
 
 	public static Date updateRss(String chatId, String url, Date last, RssHandler handler) throws Exception {
 
-		try (InputStream is = new URL(url).openStream()) {
+		HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+		con.setConnectTimeout(10000);
+		con.setReadTimeout(10000);
+		con.connect();
+		try (InputStream is = con.getInputStream()) {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(is));
 
@@ -126,6 +131,8 @@ public class RssService {
 			}
 
 			return last;
+		} finally {
+			con.disconnect();
 		}
 
 	}
