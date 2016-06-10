@@ -17,6 +17,7 @@ import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -160,33 +161,50 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 
 			if (json.get("message").get("reply_to_message").get("text").asText()
 					.equals(messages.getMessage(user.getLang(), "add"))) {
-
-				// add
 				String url = json.get("message").get("text").asText();
-				if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("feeds.url").is(url)),
-						RssSubscriptions.class)) {
-					client.sendMessage(chatId, messages.getMessage(user.getLang(), "already", url));
-					return;
-				}
-				try {
-					RssFeed feed = RssService.initRss(url);
-					RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
-					if (subs != null) {
-						mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(userId)),
-								new Update().push("feeds", feed), RssSubscriptions.class);
-					} else {
-						subs = new RssSubscriptions();
-						subs.setId(userId);
-						subs.setFeeds(new RssFeed[] { feed });
-						mongoTemplate.save(subs);
+				add(url, user);
+			} else if (json.get("message").get("entities") != null) {
+				for (JsonNode entity : json.get("message").get("entities")) {
+					if (entity.get("type").asText().equals("url")) {
+						int offset = entity.get("offset").asInt();
+						int length = entity.get("length").asInt();
+						String url = json.get("message").get("text").asText().substring(offset, length + offset);
+						add(url, user);
+						return;
 					}
-					log.debug("Added feed " + feed.getName() + " to " + userId);
-					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssadd", feed.getName()));
-				} catch (Exception e) {
-					log.error("RSS init error.", e);
-					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rsserror"));
 				}
 			}
 		}
+	}
+
+	//
+
+	private void add(String url, RssUser user) {
+
+		// add
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(user.getId()).and("feeds.url").is(url)),
+				RssSubscriptions.class)) {
+			client.sendMessage(user.getChatId(), messages.getMessage(user.getLang(), "already", url));
+			return;
+		}
+		try {
+			RssFeed feed = RssService.initRss(url);
+			RssSubscriptions subs = mongoTemplate.findById(user.getId(), RssSubscriptions.class);
+			if (subs != null) {
+				mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(user.getId())),
+						new Update().push("feeds", feed), RssSubscriptions.class);
+			} else {
+				subs = new RssSubscriptions();
+				subs.setId(user.getId());
+				subs.setFeeds(new RssFeed[] { feed });
+				mongoTemplate.save(subs);
+			}
+			log.debug("Added feed " + feed.getName() + " to " + user.getId());
+			client.sendMessage(user.getChatId(), messages.getMessage(user.getLang(), "rssadd", feed.getName()));
+		} catch (Exception e) {
+			log.error("RSS init error.", e);
+			client.sendMessage(user.getChatId(), messages.getMessage(user.getLang(), "rsserror"));
+		}
+
 	}
 }
