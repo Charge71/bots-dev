@@ -154,7 +154,6 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
-		String chatId = json.get("message").get("chat").get("id").asText();
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (json.get("message").get("reply_to_message") != null) {
@@ -163,15 +162,15 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 					.equals(messages.getMessage(user.getLang(), "add"))) {
 				String url = json.get("message").get("text").asText();
 				add(url, user);
-			} else if (json.get("message").get("entities") != null) {
-				for (JsonNode entity : json.get("message").get("entities")) {
-					if (entity.get("type").asText().equals("url")) {
-						int offset = entity.get("offset").asInt();
-						int length = entity.get("length").asInt();
-						String url = json.get("message").get("text").asText().substring(offset, length + offset);
-						add(url, user);
-						return;
-					}
+			}
+		} else if (json.get("message").get("entities") != null) {
+			for (JsonNode entity : json.get("message").get("entities")) {
+				if (entity.get("type").asText().equals("url")) {
+					int offset = entity.get("offset").asInt();
+					int length = entity.get("length").asInt();
+					String url = json.get("message").get("text").asText().substring(offset, length + offset);
+					add(url, user);
+					return;
 				}
 			}
 		}
