@@ -21,11 +21,15 @@ public class BusMilanoBot extends PlatformApiAware {
 	@BotMessage
 	public void message(ObjectNode json) {
 		log.debug("message start");
-		String text = json.get("entry").get(0).get("messaging").get(0).get("message").get("text").asText();
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.createUser(client, userId, chatId);
-		service.sendStopInfoMessenger(client, chatId, text, userId);
+		if (json.get("entry").get(0).get("messaging").get(0).get("message").get("text") != null) {
+			String text = json.get("entry").get(0).get("messaging").get(0).get("message").get("text").asText();
+			service.sendStopInfoMessenger(client, chatId, text, userId);
+		} else {
+			service.sendInfoMessenger(client, chatId);
+		}
 	}
 
 	@BotPostback(value = "stop", isPrefix = true)
