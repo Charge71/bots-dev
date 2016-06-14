@@ -1,4 +1,4 @@
-en.start=Welcome {}! This bot lets you subscribe to up to four RSS feeds updates. Click /add to add new subscriptions.
+en.start=Welcome {}! This bot lets you subscribe to up to four RSS feeds updates. Click /add to add new subscriptions or /help for more info.
 en.add=Please enter the address of the RSS feed to add.
 en.rsserror=There was an error adding RSS feed.
 en.rssadd=Added feed {}.
@@ -7,4 +7,4 @@ en.rssremove=Removed feed {}.
 en.nofav=You have no subscriptions.
 en.maxfav=You can't have more than four subscriptions.
 en.already=You already subscribed to {}.
-en.help=This bot lets you subscribe to up to four RSS feeds updates.\n\nAvailable commands:\n\n/add Add new subscription.\n/remove Remove a subscription.\n/stop Exit bot.\n/help Shows this message.
+en.help=This bot lets you subscribe to up to four RSS feeds updates.\n\nAvailable commands:\n\n/add Add new subscription.\n/remove Remove a subscription.\n/stop Exit bot.\n/help Shows this message.\n\nExample of feeds:\nhttp://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml\nhttp://sports.espn.go.com/espn/rss/news
