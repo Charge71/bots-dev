@@ -186,6 +186,7 @@ public class BusMilanoBotService {
 
 	public void sendInfoMessenger(ApiClient client, String chatId) {
 		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 	}
 
 	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
@@ -200,19 +201,23 @@ public class BusMilanoBotService {
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				client.sendMessage(chatId,
 						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+				client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			} else {
 				log.error("Errore su codice: " + stopId, e);
 				client.sendMessage(chatId,
 						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+				client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
 			client.sendMessage(chatId,
 					"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11111.");
+			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 		}
 	}
 
@@ -281,6 +286,16 @@ public class BusMilanoBotService {
 			result.add("Rimuovi fermata dai preferiti /unfav" + stopId);
 		}
 		return result;
+	}
+
+	private ObjectNode getImageMessage(String imageUrl) {
+		ObjectNode response = JsonNodeFactory.instance.objectNode();
+		ObjectNode message = response.putObject("message");
+		ObjectNode attachment = message.putObject("attachment");
+		attachment.put("type", "image");
+		ObjectNode payload = attachment.putObject("payload");
+		payload.put("url", imageUrl);
+		return response;
 	}
 
 	private ObjectNode getResponseButtonsMessenger(ObjectNode json, String stopId, String id) {
