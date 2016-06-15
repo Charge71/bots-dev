@@ -124,7 +124,7 @@ public class RssService {
 			SyndFeed feed = input.build(new XmlReader(is));
 
 			for (SyndEntry entry : feed.getEntries()) {
-				if (entry.getPublishedDate().after(last)) {
+				if (entry.getPublishedDate() != null && entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
 					handler.handle(chatId, feed.getTitle(), entry.getTitle(), entry.getLink());
 				}
