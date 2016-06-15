@@ -72,8 +72,12 @@ public class BusMilanoBot extends PlatformApiAware {
 		log.debug("default start");
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
-		String stopId = json.get("message").get("text").asText();
-		service.sendStopInfoTelegram(client, chatId, stopId, userId);
+		if (json.get("message").get("text") != null) {
+			String stopId = json.get("message").get("text").asText();
+			service.sendStopInfoTelegram(client, chatId, stopId, userId);
+		} else {
+			service.sendInfoTelegram(client, chatId);
+		}
 	}
 
 	@BotCommand(value = "/ferm", isPrefix = true)

@@ -188,6 +188,10 @@ public class BusMilanoBotService {
 		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 	}
+	
+	public void sendInfoTelegram(ApiClient client, String chatId) {
+		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+	}
 
 	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
 		try {
