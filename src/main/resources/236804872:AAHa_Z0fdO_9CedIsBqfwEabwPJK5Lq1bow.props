@@ -8,3 +8,4 @@ en.nofav=You have no subscriptions.
 en.maxfav=You can't have more than four subscriptions.
 en.already=You already subscribed to {}.
 en.help=This bot lets you subscribe to up to four RSS feeds updates.\n\nAvailable commands:\n\n/add Add new subscription.\n/remove Remove a subscription.\n/stop Exit bot.\n/help Shows this message.\n\nExample of feeds:\nhttp://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml\nhttp://sports.espn.go.com/espn/rss/news
+en.restart=You have not started the bot yet, please type /start to do it.

@@ -101,9 +101,9 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			for (int i = 0; i < feeds.length; i++) {
 				ObjectNode btn = b1.addArray().addObject();
 				btn.put("text", feeds[i].getName());
-				btn.put("callback_data", "remove_" + i);
+				btn.put("callback_data", "remove_" + feeds[i].getUrl());
 			}
-			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
+			client.sendButton(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		} else {
 			client.sendMessage(chatId, messages.getMessage(user.getLang(), "nofav", user.getFirstName()));
 		}
@@ -115,7 +115,11 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
-		client.sendMessage(chatId, messages.getMessage(user.getLang(), "help"));
+		if (user != null) {
+			client.sendMessage(chatId, messages.getMessage(user.getLang(), "help"));
+		} else {
+			client.sendMessage(chatId, messages.getMessage("en", "restart"));
+		}
 	}
 
 	@BotCommand("/stop")
@@ -140,14 +144,18 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		RssUser user = mongoTemplate.findById(fromId, RssUser.class);
 		String data = json.get("callback_query").get("data").asText();
 		if (data.startsWith("remove_")) {
-			int index = Integer.parseInt(data.substring(7));
+			String url = data.substring(7);
 			RssSubscriptions subs = mongoTemplate.findById(fromId, RssSubscriptions.class);
 			RssFeed[] feeds = subs.getFeeds();
-			RssFeed feed = subs.getFeeds()[index];
-			subs.setFeeds(ArrayUtils.remove(feeds, index));
+			for (int i = 0; i < feeds.length; i++) {
+				if (feeds[i].getUrl().equals(url)) {
+					subs.setFeeds(ArrayUtils.remove(feeds, i));
+					log.debug("Removed " + feeds[i].getUrl() + " from " + fromId);
+					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssremove", feeds[i].getName()));
+					break;
+				}
+			}
 			mongoTemplate.save(subs);
-			client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()));
-			log.debug("Removed " + feed.getUrl() + " from " + fromId);
 		}
 	}
 
