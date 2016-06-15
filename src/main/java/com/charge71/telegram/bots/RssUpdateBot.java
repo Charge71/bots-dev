@@ -101,7 +101,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			for (int i = 0; i < feeds.length; i++) {
 				ObjectNode btn = b1.addArray().addObject();
 				btn.put("text", feeds[i].getName());
-				btn.put("callback_data", "remove_" + feeds[i].getUrl());
+				btn.put("callback_data", "remove_" + feeds[i].getName());
 			}
 			client.sendButton(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		} else {
@@ -144,11 +144,11 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		RssUser user = mongoTemplate.findById(fromId, RssUser.class);
 		String data = json.get("callback_query").get("data").asText();
 		if (data.startsWith("remove_")) {
-			String url = data.substring(7);
+			String name = data.substring(7);
 			RssSubscriptions subs = mongoTemplate.findById(fromId, RssSubscriptions.class);
 			RssFeed[] feeds = subs.getFeeds();
 			for (int i = 0; i < feeds.length; i++) {
-				if (feeds[i].getUrl().equals(url)) {
+				if (feeds[i].getName().equals(name)) {
 					subs.setFeeds(ArrayUtils.remove(feeds, i));
 					log.debug("Removed " + feeds[i].getUrl() + " from " + fromId);
 					client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssremove", feeds[i].getName()));
