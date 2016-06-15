@@ -51,7 +51,10 @@ public class RssService {
 					try {
 						//log.debug("Checking " + feed.getUrl());
 						Date date = updateRss(user.getChatId(), feed.getUrl(), feed.getLast(), rssHandler);
-						if (date.after(feed.getLast())) {
+						if (date == null) {
+							log.warn("Feed returned null date");
+						}
+						if (date != null && date.after(feed.getLast())) {
 							updateDate(user.getId(), feed.getUrl(), date);
 						}
 						//log.debug("Done " + feed.getUrl());
@@ -102,6 +105,10 @@ public class RssService {
 				if (last == null || entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
 				}
+			}
+			
+			if (last == null) {
+				throw new Exception("Unrecognized RSS format");
 			}
 
 			RssFeed rssfeed = new RssFeed();
