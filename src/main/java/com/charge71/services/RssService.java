@@ -133,7 +133,9 @@ public class RssService {
 			for (SyndEntry entry : feed.getEntries()) {
 				if (entry.getPublishedDate() != null && entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
-					handler.handle(chatId, feed.getTitle(), entry.getTitle(), entry.getLink());
+					if (entry.getLink() != null) {
+						handler.handle(chatId, feed.getTitle(), entry.getTitle(), entry.getLink());
+					}
 				}
 			}
 
