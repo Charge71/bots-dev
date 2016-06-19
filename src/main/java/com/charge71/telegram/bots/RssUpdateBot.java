@@ -147,7 +147,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (json.get("message").get("text") != null && json.get("message").get("text").asText().startsWith("\u274C")) {
 			String chatId = json.get("message").get("chat").get("id").asText();
-			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3));
+			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3)) - 1;
 			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
 			RssFeed[] feeds = subs.getFeeds();
 			RssFeed feed = subs.getFeeds()[index];
