@@ -150,7 +150,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		if (json.get("message").get("text") != null && json.get("message").get("text").asText().startsWith("\u274C")) {
 			String chatId = json.get("message").get("chat").get("id").asText();
 			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3)) - 1;
-			if (index == 0) {
+			if (index == -1) {
 				ObjectNode buttons = JsonNodeFactory.instance.objectNode();
 				buttons.put("hide_keyboard", true);
 				client.sendButtons(chatId, null, buttons.toString());
