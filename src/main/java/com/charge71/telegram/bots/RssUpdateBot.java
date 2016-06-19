@@ -133,6 +133,8 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 				ObjectNode btn = b1.addArray().addObject();
 				btn.put("text", "\u274C " + (i + 1) + " " + feeds[i].getName());
 			}
+			ObjectNode btn = b1.addArray().addObject();
+			btn.put("text", "\u274C 0 Cancel");
 			buttons.put("resize_keyboard", true);
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		} else {
@@ -148,6 +150,12 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		if (json.get("message").get("text") != null && json.get("message").get("text").asText().startsWith("\u274C")) {
 			String chatId = json.get("message").get("chat").get("id").asText();
 			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3)) - 1;
+			if (index == 0) {
+				ObjectNode buttons = JsonNodeFactory.instance.objectNode();
+				buttons.put("hide_keyboard", true);
+				client.sendButtons(chatId, null, buttons.toString());
+				return;
+			}
 			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
 			RssFeed[] feeds = subs.getFeeds();
 			RssFeed feed = subs.getFeeds()[index];

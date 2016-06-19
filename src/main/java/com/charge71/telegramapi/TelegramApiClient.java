@@ -82,7 +82,10 @@ public class TelegramApiClient implements ApiClient {
 
 	public ObjectNode sendButtons(String chatId, String text, String buttons) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
-				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("reply_markup", buttons);
+				.queryParam("chat_id", chatId).queryParam("reply_markup", buttons);
+		if (text != null) {
+			builder.queryParam("text", text);
+		}
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
