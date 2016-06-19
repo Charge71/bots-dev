@@ -153,7 +153,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			if (index == -1) {
 				ObjectNode buttons = JsonNodeFactory.instance.objectNode();
 				buttons.put("hide_keyboard", true);
-				client.sendButtons(chatId, "", buttons.toString());
+				client.sendButtons(chatId, "\u274C", buttons.toString());
 				return;
 			}
 			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
