@@ -92,28 +92,6 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		}
 	}
 
-	@BotCommand("/remove")
-	public void remove(ObjectNode json, String command) {
-		log.debug("/remove start");
-		String chatId = json.get("message").get("chat").get("id").asText();
-		String userId = json.get("message").get("from").get("id").asText();
-		RssUser user = mongoTemplate.findById(userId, RssUser.class);
-		RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
-		if (subs != null && subs.getFeeds() != null && subs.getFeeds().length > 0) {
-			RssFeed[] feeds = subs.getFeeds();
-			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
-			ArrayNode b1 = buttons.putArray("inline_keyboard");
-			for (int i = 0; i < feeds.length; i++) {
-				ObjectNode btn = b1.addArray().addObject();
-				btn.put("text", feeds[i].getName());
-				btn.put("callback_data", "remove_" + i);
-			}
-			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
-		} else {
-			client.sendMessage(chatId, messages.getMessage(user.getLang(), "nofav", user.getFirstName()));
-		}
-	}
-
 	@BotCommand("/help")
 	public void help(ObjectNode json, String command) {
 		log.debug("/help start");
@@ -141,8 +119,8 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		}
 	}
 
-	@BotCommand("/test")
-	public void test(ObjectNode json, String command) {
+	@BotCommand("/remove")
+	public void remove(ObjectNode json, String command) {
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
@@ -162,32 +140,25 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 		}
 	}
 
-	@BotCommand("callback")
-	public void callback(ObjectNode json, String command) {
-		log.debug("callback start");
-		String chatId = json.get("callback_query").get("message").get("chat").get("id").asText();
-		String fromId = json.get("callback_query").get("from").get("id").asText();
-		RssUser user = mongoTemplate.findById(fromId, RssUser.class);
-		String data = json.get("callback_query").get("data").asText();
-		if (data.startsWith("remove_")) {
-			int index = Integer.parseInt(data.substring(7));
-			RssSubscriptions subs = mongoTemplate.findById(fromId, RssSubscriptions.class);
-			RssFeed[] feeds = subs.getFeeds();
-			RssFeed feed = subs.getFeeds()[index];
-			subs.setFeeds(ArrayUtils.remove(feeds, index));
-			mongoTemplate.save(subs);
-			client.sendMessage(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()));
-			log.debug("Removed " + feed.getUrl() + " from " + fromId);
-		}
-	}
-
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
-		if (json.get("message").get("reply_to_message") != null) {
-
+		if (json.get("message").get("text") != null && json.get("message").get("text").asText().startsWith("\u274C")) {
+			String chatId = json.get("message").get("chat").get("id").asText();
+			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3));
+			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
+			RssFeed[] feeds = subs.getFeeds();
+			RssFeed feed = subs.getFeeds()[index];
+			subs.setFeeds(ArrayUtils.remove(feeds, index));
+			mongoTemplate.save(subs);
+			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
+			buttons.put("hide_keyboard", true);
+			client.sendButtons(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()),
+					buttons.toString());
+			log.debug("Removed " + feed.getUrl() + " from " + userId);
+		} else if (json.get("message").get("reply_to_message") != null) {
 			if (json.get("message").get("reply_to_message").get("text").asText()
 					.equals(messages.getMessage(user.getLang(), "add"))) {
 				String url = json.get("message").get("text").asText();
@@ -203,19 +174,6 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 					return;
 				}
 			}
-		} else if (json.get("message").get("text") != null
-				&& json.get("message").get("text").asText().startsWith("\u274C")) {
-			String chatId = json.get("message").get("chat").get("id").asText();
-			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3));
-			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
-			RssFeed[] feeds = subs.getFeeds();
-			RssFeed feed = subs.getFeeds()[index];
-			subs.setFeeds(ArrayUtils.remove(feeds, index));
-			mongoTemplate.save(subs);
-			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
-			buttons.put("hide_keyboard", true);
-			client.sendButtons(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()), buttons.toString());
-			log.debug("Removed " + feed.getUrl() + " from " + userId);
 		}
 	}
 
