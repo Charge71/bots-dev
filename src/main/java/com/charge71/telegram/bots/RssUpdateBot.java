@@ -140,7 +140,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			mongoTemplate.remove(user);
 		}
 	}
-	
+
 	@BotCommand("/test")
 	public void test(ObjectNode json, String command) {
 		String chatId = json.get("message").get("chat").get("id").asText();
@@ -204,6 +204,10 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 					return;
 				}
 			}
+		} else if (json.get("message").get("text") != null
+				&& json.get("message").get("text").asText().startsWith("\u274C")) {
+			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2));
+			log.debug("delete " + index);
 		}
 	}
 
