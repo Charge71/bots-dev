@@ -156,7 +156,6 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 				btn.put("text", "\u274C " + (i + 1) + " " + feeds[i].getName());
 			}
 			buttons.put("resize_keyboard", true);
-			buttons.put("one_time_keyboard", true);
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		} else {
 			client.sendMessage(chatId, messages.getMessage(user.getLang(), "nofav", user.getFirstName()));
@@ -206,8 +205,17 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			}
 		} else if (json.get("message").get("text") != null
 				&& json.get("message").get("text").asText().startsWith("\u274C")) {
-			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2));
-			log.debug("delete " + index);
+			String chatId = json.get("message").get("chat").get("id").asText();
+			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3));
+			RssSubscriptions subs = mongoTemplate.findById(userId, RssSubscriptions.class);
+			RssFeed[] feeds = subs.getFeeds();
+			RssFeed feed = subs.getFeeds()[index];
+			subs.setFeeds(ArrayUtils.remove(feeds, index));
+			mongoTemplate.save(subs);
+			ObjectNode buttons = JsonNodeFactory.instance.objectNode();
+			buttons.put("hide_keyboard", true);
+			client.sendButtons(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()), buttons.toString());
+			log.debug("Removed " + feed.getUrl() + " from " + userId);
 		}
 	}
 
