@@ -36,34 +36,34 @@ public class RssService {
 	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	public static interface RssHandler {
-		public void handle(String chatId, String feedTitle, String title, String link);
+		public void handle(RssUser user, String feedTitle, String title, String link);
 	}
 
 	private class RssChecker implements Runnable {
 
 		@Override
 		public void run() {
-			//log.info("RssChecker starting...");
+			// log.info("RssChecker starting...");
 			List<RssUser> users = getUsers();
 			for (RssUser user : users) {
 				RssFeed[] feeds = getFeeds(user.getId());
 				for (RssFeed feed : feeds) {
 					try {
-						//log.debug("Checking " + feed.getUrl());
-						Date date = updateRss(user.getChatId(), feed.getUrl(), feed.getLast(), rssHandler);
+						// log.debug("Checking " + feed.getUrl());
+						Date date = updateRss(user, feed, rssHandler);
 						if (date == null) {
 							log.warn("Feed returned null date");
 						}
 						if (date != null && date.after(feed.getLast())) {
 							updateDate(user.getId(), feed.getUrl(), date);
 						}
-						//log.debug("Done " + feed.getUrl());
+						// log.debug("Done " + feed.getUrl());
 					} catch (Exception e) {
 						log.error("Error checking " + feed.getUrl(), e);
 					}
 				}
 			}
-			//log.info("RssChecker finished.");
+			// log.info("RssChecker finished.");
 		}
 
 	}
@@ -106,7 +106,7 @@ public class RssService {
 					last = entry.getPublishedDate();
 				}
 			}
-			
+
 			if (last == null) {
 				throw new Exception("Unrecognized RSS format");
 			}
@@ -120,9 +120,9 @@ public class RssService {
 
 	}
 
-	public static Date updateRss(String chatId, String url, Date last, RssHandler handler) throws Exception {
+	public static Date updateRss(RssUser user, RssFeed rssFeed, RssHandler handler) throws Exception {
 
-		HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+		HttpURLConnection con = (HttpURLConnection) new URL(rssFeed.getUrl()).openConnection();
 		con.setConnectTimeout(10000);
 		con.setReadTimeout(10000);
 		con.connect();
@@ -130,11 +130,12 @@ public class RssService {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(is));
 
+			Date last = rssFeed.getLast();
 			for (SyndEntry entry : feed.getEntries()) {
 				if (entry.getPublishedDate() != null && entry.getPublishedDate().after(last)) {
 					last = entry.getPublishedDate();
 					if (entry.getLink() != null) {
-						handler.handle(chatId, feed.getTitle(), entry.getTitle(), entry.getLink());
+						handler.handle(user, feed.getTitle(), entry.getTitle(), entry.getLink());
 					}
 				}
 			}

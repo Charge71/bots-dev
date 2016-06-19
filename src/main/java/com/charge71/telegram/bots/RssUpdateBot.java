@@ -40,9 +40,14 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 	}
 
 	@Override
-	public void handle(String chatId, String feedTitle, String title, String link) {
+	public void handle(RssUser user, String feedTitle, String title, String link) {
 		log.debug("Handle " + link);
-		client.sendMarkdownMessage(chatId, feedTitle + "\n[" + title + "](" + link + ")", false);
+		ObjectNode node = client.sendMarkdownMessage(user.getChatId(), feedTitle + "\n[" + title + "](" + link + ")",
+				false);
+		if (node == null) { // 403
+			mongoTemplate.remove(Query.query(Criteria.where("id").is(user.getId())), RssSubscriptions.class);
+			log.info("Removed subscriptions for " + user.getId());
+		}
 	}
 
 	@BotCommand("/start")

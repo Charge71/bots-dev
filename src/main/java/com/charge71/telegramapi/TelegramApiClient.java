@@ -38,7 +38,15 @@ public class TelegramApiClient implements ApiClient {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + token).path("/sendMessage")
 				.queryParam("chat_id", chatId).queryParam("text", text).queryParam("parse_mode", "Markdown")
 				.queryParam("disable_web_page_preview", disablePreview);
-		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+		try {
+			return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+				return null;
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	public ObjectNode sendLocationRequest(String chatId, String text, String request) {
