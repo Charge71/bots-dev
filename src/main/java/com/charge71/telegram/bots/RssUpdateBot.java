@@ -153,9 +153,10 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 			ArrayNode b1 = buttons.putArray("keyboard");
 			for (int i = 0; i < feeds.length; i++) {
 				ObjectNode btn = b1.addArray().addObject();
-				btn.put("text", i + " " + feeds[i].getName());
+				btn.put("text", "\u274C " + (i + 1) + " " + feeds[i].getName());
 			}
 			buttons.put("resize_keyboard", true);
+			buttons.put("one_time_keyboard", true);
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "remove"), buttons.toString());
 		} else {
 			client.sendMessage(chatId, messages.getMessage(user.getLang(), "nofav", user.getFirstName()));
