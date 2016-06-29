@@ -60,6 +60,10 @@ public class TelegramApiClient implements ApiClient<TelegramRequest, ObjectNode>
 			return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+				log.warn("FOBIDDEN chatId: " + chatId);
+				return null;
+			} else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				log.warn("BAD_REQUEST text: " + text);
 				return null;
 			} else {
 				throw e;
