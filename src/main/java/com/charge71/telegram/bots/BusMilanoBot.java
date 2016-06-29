@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.services.BusMilanoBotService;
+import com.charge71.telegramapi.TelegramRequest;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA")
-public class BusMilanoBot extends PlatformApiAware {
+public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> {
 
 	private static Logger log = Logger.getLogger(BusMilanoBot.class);
 

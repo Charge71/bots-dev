@@ -29,6 +29,7 @@ public class TelegramBotDispatcher {
 	private Map<String, Map<String, Method>> methods = new HashMap<String, Map<String, Method>>();
 	private Map<String, Map<String, Method>> prefixMethods = new HashMap<String, Map<String, Method>>();
 
+	@SuppressWarnings("unchecked")
 	public void init() throws IOException {
 
 		for (String botClass : botClasses) {
@@ -57,9 +58,9 @@ public class TelegramBotDispatcher {
 					}
 				}
 				beanFactory.autowireBean(bot);
-				if (bot instanceof PlatformApiAware) {
-					((PlatformApiAware) bot).setClient(new TelegramApiClient(token));
-					((PlatformApiAware) bot).setMessages(new MessageHelper(token));
+				if (bot instanceof PlatformApiAware<?, ?>) {
+					((PlatformApiAware<TelegramRequest, ObjectNode>) bot).setClient(new TelegramApiClient(token));
+					((PlatformApiAware<?, ?>) bot).setMessages(new MessageHelper(token));
 				}
 				log.info("BotDispatcher init ok for class " + botClass);
 				log.debug("Commands: " + methods.get(token).keySet());

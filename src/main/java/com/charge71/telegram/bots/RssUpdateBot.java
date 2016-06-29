@@ -1,5 +1,7 @@
 package com.charge71.telegram.bots;
 
+import java.util.List;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
 import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
+import com.charge71.telegramapi.TelegramRequest;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,7 +26,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("236804872:AAHa_Z0fdO_9CedIsBqfwEabwPJK5Lq1bow")
-public class RssUpdateBot extends PlatformApiAware implements RssHandler {
+public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements RssHandler {
 
 	private static Logger log = Logger.getLogger(RssUpdateBot.class);
 
@@ -34,7 +37,7 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public void setClient(ApiClient client) {
+	public void setClient(ApiClient<TelegramRequest, ObjectNode> client) {
 		super.setClient(client);
 		rssService.start(this);
 	}
@@ -182,6 +185,31 @@ public class RssUpdateBot extends PlatformApiAware implements RssHandler {
 					return;
 				}
 			}
+		}
+	}
+
+	@BotCommand("/broadcast")
+	public void broadcast(ObjectNode json, String command) {
+		log.debug("broadcast start");
+		String id = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		RssUser user = mongoTemplate.findById(id, RssUser.class);
+		if (id.equals("148883640")) {
+			List<RssSubscriptions> subs = mongoTemplate.findAll(RssSubscriptions.class);
+			for (RssSubscriptions sub : subs) {
+				if (sub.getFeeds() != null && sub.getFeeds().length > 0) {
+					RssUser ruser = mongoTemplate.findById(sub.getId(), RssUser.class);
+					TelegramRequest tr = TelegramRequest.sendMessage(ruser.getChatId())
+							.text(messages.getMessage(user.getLang(), "broadcast"));
+					try {
+						client.sendRequest(tr);
+					} catch (Exception e) {
+						log.error("Error sending message to " + ruser.getChatId(), e);
+					}
+				}
+			}
+		} else {
+			client.sendMessage(chatId, messages.getMessage(user == null ? "en" : user.getLang(), "unknown"));
 		}
 	}
 

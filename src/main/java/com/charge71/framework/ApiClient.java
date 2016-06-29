@@ -2,7 +2,7 @@ package com.charge71.framework;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public interface ApiClient {
+public interface ApiClient<T, R> extends RequestSender<T, R>{
 
 	public ObjectNode sendMessage(String chatId, String text);
 

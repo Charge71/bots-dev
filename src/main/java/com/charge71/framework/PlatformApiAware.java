@@ -2,13 +2,13 @@ package com.charge71.framework;
 
 import com.charge71.lang.MessageHelper;
 
-public class PlatformApiAware {
+public class PlatformApiAware<T, R> {
 
-	public ApiClient client;
+	public ApiClient<T, R> client;
 
 	public MessageHelper messages;
 
-	public void setClient(ApiClient client) {
+	public void setClient(ApiClient<T, R> client) {
 		this.client = client;
 	}
 

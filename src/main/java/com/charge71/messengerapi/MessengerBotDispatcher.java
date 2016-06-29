@@ -30,6 +30,7 @@ public class MessengerBotDispatcher {
 	private Map<String, Map<String, Method>> methods = new HashMap<String, Map<String, Method>>();
 	private Map<String, Map<String, Method>> prefixMethods = new HashMap<String, Map<String, Method>>();
 
+	@SuppressWarnings("unchecked")
 	public void init() throws IOException {
 
 		for (String botClass : botClasses) {
@@ -63,8 +64,8 @@ public class MessengerBotDispatcher {
 						}
 					}
 				}
-				if (bot instanceof PlatformApiAware) {
-					((PlatformApiAware) bot).setClient(new MessengerApiClient(token));
+				if (bot instanceof PlatformApiAware<?,?>) {
+					((PlatformApiAware<MessengerRequest,ObjectNode>) bot).setClient(new MessengerApiClient(token));
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
