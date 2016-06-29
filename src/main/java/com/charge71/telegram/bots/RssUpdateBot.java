@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
@@ -47,7 +48,7 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		log.debug("Handle " + link);
 		ObjectNode node = client.sendMarkdownMessage(user.getChatId(), feedTitle + "\n[" + title + "](" + link + ")",
 				false);
-		if (node == null) { // 403
+		if (node.get("errorCode") != null && node.get("errorCode").asInt() == HttpStatus.FORBIDDEN.value()) { // 403
 			mongoTemplate.remove(Query.query(Criteria.where("id").is(user.getId())), RssSubscriptions.class);
 			log.info("Removed subscriptions for " + user.getId());
 		}

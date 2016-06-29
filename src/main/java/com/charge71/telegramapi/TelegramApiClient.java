@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.charge71.framework.ApiClient;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TelegramApiClient implements ApiClient<TelegramRequest, ObjectNode> {
@@ -61,10 +62,10 @@ public class TelegramApiClient implements ApiClient<TelegramRequest, ObjectNode>
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
 				log.warn("FOBIDDEN chatId: " + chatId);
-				return null;
+				return JsonNodeFactory.instance.objectNode().put("errorCode", HttpStatus.FORBIDDEN.value());
 			} else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				log.warn("BAD_REQUEST text: " + text);
-				return null;
+				return JsonNodeFactory.instance.objectNode().put("errorCode", HttpStatus.BAD_REQUEST.value());
 			} else {
 				throw e;
 			}
