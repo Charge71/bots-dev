@@ -59,7 +59,7 @@ public class RssService {
 						}
 						// log.debug("Done " + feed.getUrl());
 					} catch (Exception e) {
-						log.error("Error checking " + feed.getUrl(), e);
+						log.error("Error checking " + feed.getUrl() + ": " + e.getMessage());
 					}
 				}
 			}
