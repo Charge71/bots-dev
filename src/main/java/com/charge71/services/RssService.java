@@ -124,7 +124,7 @@ public class RssService {
 
 		HttpURLConnection con = (HttpURLConnection) new URL(rssFeed.getUrl()).openConnection();
 		con.setConnectTimeout(10000);
-		con.setReadTimeout(10000);
+		con.setReadTimeout(20000);
 		con.connect();
 		try (InputStream is = con.getInputStream()) {
 			SyndFeedInput input = new SyndFeedInput();
