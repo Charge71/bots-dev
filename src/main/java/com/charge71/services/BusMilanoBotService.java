@@ -289,7 +289,12 @@ public class BusMilanoBotService {
 		} else {
 			result.add("Rimuovi fermata dai preferiti /unfav" + stopId);
 		}
+		stopRequested(result, stopId);
 		return result;
+	}
+	
+	private void stopRequested(List<String> result, String stopId) {
+		log.info("STOP REQUESTED " + stopId);
 	}
 
 	private ObjectNode getImageMessage(String imageUrl) {
