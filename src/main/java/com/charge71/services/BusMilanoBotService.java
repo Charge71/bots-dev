@@ -289,11 +289,11 @@ public class BusMilanoBotService {
 		} else {
 			result.add("Rimuovi fermata dai preferiti /unfav" + stopId);
 		}
-		stopRequested(result, stopId);
+		stopRequested(stopId);
 		return result;
 	}
 	
-	private void stopRequested(List<String> result, String stopId) {
+	private void stopRequested(String stopId) {
 		log.info("STOP REQUESTED " + stopId);
 	}
 
@@ -354,6 +354,7 @@ public class BusMilanoBotService {
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
 		}
+		stopRequested(stopId);
 		return response;
 	}
 }
