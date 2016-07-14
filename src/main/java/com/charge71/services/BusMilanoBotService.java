@@ -141,7 +141,7 @@ public class BusMilanoBotService {
 			if (favorites.getStops() != null && favorites.getStops().length > 0) {
 				Keyboard buttons = Keyboard.replyKeyboard().resize();
 				for (int i = 0; i < favorites.getStops().length; i++) {
-					if (i < 0) {
+					if (i > 0) {
 						buttons.row();
 					}
 					BusMilanoStop stop = favorites.getStops()[i];
