@@ -1,8 +1,14 @@
 package com.charge71.telegram.bots;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.charge71.framework.AdsProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.services.BusMilanoBotService;
 import com.charge71.telegramapi.TelegramRequest;
@@ -11,7 +17,7 @@ import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA")
-public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> {
+public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements AdsProvider {
 
 	private static Logger log = Logger.getLogger(BusMilanoBot.class);
 
@@ -95,6 +101,15 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		log.debug("/stop start");
 		String userId = json.get("message").get("from").get("id").asText();
 		service.stopBot(userId);
+	}
+
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			response.sendRedirect("http://www.eidosmedia.com");
+		} catch (IOException e) {
+			log.error("Ads error", e);
+		}
 	}
 
 }
