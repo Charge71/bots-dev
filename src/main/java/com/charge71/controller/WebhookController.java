@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,12 @@ public class WebhookController {
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public String test() {
 		return "OK";
+	}
+
+	@RequestMapping(value = "/ads/{token}", method = RequestMethod.GET)
+	public void ads(@PathVariable("token") String token, HttpServletRequest request, HttpServletResponse response) {
+		log.info("ADS " + token);
+		botDispatcher.ads(token, request, response);
 	}
 
 	@RequestMapping(value = "/webhook/{token}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -6,10 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import com.charge71.framework.AdsProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.lang.MessageHelper;
 import com.charge71.telegramapi.annotations.BotCommand;
@@ -100,6 +104,19 @@ public class TelegramBotDispatcher {
 		} catch (Exception e) {
 			log.error("BotDispatcher error for command " + command, e);
 		}
+	}
+
+	public void ads(String token, HttpServletRequest request, HttpServletResponse response) {
+		Object bot = bots.get(token);
+		if (bot == null) {
+			log.warn("Not found bot with token " + token);
+			return;
+		}
+		if (!(bot instanceof AdsProvider)) {
+			log.warn("Not AdsProvider bot " + bot.getClass().getName());
+			return;
+		}
+		((AdsProvider)bot).handle(request, response);
 	}
 
 	public List<String> getBotClasses() {
