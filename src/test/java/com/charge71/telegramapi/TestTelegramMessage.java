@@ -9,7 +9,7 @@ import com.charge71.framework.RequestSender;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestTelegramMessage implements RequestSender<TelegramRequest, ObjectNode> {
-
+	
 	private final String token;
 
 	private RestTemplate restTemplate = new RestTemplate();

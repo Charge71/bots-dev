@@ -19,6 +19,8 @@ import com.charge71.framework.ApiClient;
 import com.charge71.model.BusMilanoFavorites;
 import com.charge71.model.BusMilanoFavorites.BusMilanoStop;
 import com.charge71.model.BusMilanotUser;
+import com.charge71.telegramapi.TelegramRequest;
+import com.charge71.telegramapi.TelegramRequest.Keyboard;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -26,7 +28,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class BusMilanoBotService {
 
-	private static Logger log = Logger.getLogger(BusMilanoBotService.class);
+	private static final String BUS_STOP = new String(Character.toChars(128655));
+
+	private static final Logger log = Logger.getLogger(BusMilanoBotService.class);
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -131,6 +135,34 @@ public class BusMilanoBotService {
 		}
 	}
 
+	public void listFavoritesTelegramNew(ApiClient client, String chatId, String userId) {
+		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
+			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
+			if (favorites.getStops() != null && favorites.getStops().length > 0) {
+				Keyboard buttons = Keyboard.replyKeyboard().resize();
+				for (int i = 0; i < favorites.getStops().length; i++) {
+					if (i < 0) {
+						buttons.row();
+					}
+					BusMilanoStop stop = favorites.getStops()[i];
+					buttons.button(BUS_STOP + stop.getId() + " " + stop.getName());
+				}
+				TelegramRequest req = TelegramRequest.sendMessage(chatId)
+						.text("_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)")
+						.disableWebPagePreview().keyboard(buttons);
+				try {
+					client.sendRequest(req);
+				} catch (Exception e) {
+					log.error("Error sending message to " + chatId, e);
+				}
+			} else {
+				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+			}
+		} else {
+			client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+		}
+	}
+
 	public void listFavoritesTelegram(ApiClient client, String chatId, String userId) {
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
 			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
@@ -188,7 +220,7 @@ public class BusMilanoBotService {
 		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 	}
-	
+
 	public void sendInfoTelegram(ApiClient client, String chatId) {
 		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 	}
@@ -210,12 +242,14 @@ public class BusMilanoBotService {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				client.sendMessage(chatId,
 						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
-				client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+				client.sentStructuredMessage(chatId,
+						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			} else {
 				log.error("Errore su codice: " + stopId, e);
 				client.sendMessage(chatId,
 						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
-				client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+				client.sentStructuredMessage(chatId,
+						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
@@ -292,7 +326,7 @@ public class BusMilanoBotService {
 		stopRequested(stopId);
 		return result;
 	}
-	
+
 	private void stopRequested(String stopId) {
 		log.info("STOP REQUESTED " + stopId);
 	}

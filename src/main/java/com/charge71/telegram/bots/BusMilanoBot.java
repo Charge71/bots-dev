@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA")
 public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements AdsProvider {
-
-	private static Logger log = Logger.getLogger(BusMilanoBot.class);
+	
+	private static final Logger log = Logger.getLogger(BusMilanoBot.class);
 
 	@Autowired
 	private BusMilanoBotService service;
@@ -74,6 +74,14 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		service.listFavoritesTelegram(client, chatId, userId);
 	}
 
+	@BotCommand("/preferite2")
+	public void favorites2(ObjectNode json, String command) {
+		log.debug("/preferite start");
+		String userId = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
+		service.listFavoritesTelegramNew(client, chatId, userId);
+	}
+	
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
