@@ -6,10 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.charge71.framework.RequestSender;
+import com.charge71.telegramapi.TelegramRequest.Keyboard;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestTelegramMessage implements RequestSender<TelegramRequest, ObjectNode> {
-	
+
 	private final String token;
 
 	private RestTemplate restTemplate = new RestTemplate();
@@ -29,19 +30,20 @@ public class TestTelegramMessage implements RequestSender<TelegramRequest, Objec
 	//
 
 	public static void main(String[] args) throws Exception {
-		TestTelegramMessage sender = new TestTelegramMessage("236804872:AAHa_Z0fdO_9CedIsBqfwEabwPJK5Lq1bow");
+		TestTelegramMessage sender = new TestTelegramMessage("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA");
 
 		TelegramRequest tm =
 				TelegramRequest.sendMessage("148883640").text("Ciao")
-		//.keyboard(Keyboard
-		// .replyKeyboard()
-		// .button(new String(Character.toChars(127468)) + new
+							.keyboard(Keyboard
+									.replyKeyboard()
+									.button(new String(Character.toChars(10133)) + "11334")
+		//+ new
 		// String(Character.toChars(127463)) + " English")
-		// .row()
-		// .button(new String(Character.toChars(127470)) + new
+		.row()
+		.button("/preferite2"));
 		// String(Character.toChars(127481)) + " Italiano")
 		// .resize());
-		.hideKeyboard();
+		//.hideKeyboard();
 		// .parseModeMarkdown();
 
 		//TelegramRequest tm = TelegramRequest.getUserProfilePhotos("148883640").limit(1);

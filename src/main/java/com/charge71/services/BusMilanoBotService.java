@@ -29,6 +29,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class BusMilanoBotService {
 
 	private static final String BUS_STOP = new String(Character.toChars(128655));
+	private static final String PLUS_SIGN = new String(Character.toChars(10133));
+	private static final String MINUS_SIGN = new String(Character.toChars(10134));
 
 	private static final Logger log = Logger.getLogger(BusMilanoBotService.class);
 
@@ -260,9 +262,14 @@ public class BusMilanoBotService {
 	}
 
 	public void sendStopInfoTelegram(ApiClient client, String chatId, String text, String userId) {
+		if (text.startsWith(PLUS_SIGN)) {
+			String stopId = text.substring(1, 6);
+			addFavorite(client, stopId, chatId, userId);
+			listFavoritesTelegram(client, chatId, userId);
+			return;
+		}
 		if (text.startsWith(BUS_STOP)) {
 			text = text.substring(2, 7);
-			log.debug("***" + text);
 		}
 		try {
 			Long.parseLong(text);
