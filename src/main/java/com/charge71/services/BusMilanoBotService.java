@@ -137,7 +137,7 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void listFavoritesTelegramNew(ApiClient client, String chatId, String userId) {
+	public void listFavoritesTelegram(ApiClient client, String chatId, String userId) {
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
 			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
 			if (favorites.getStops() != null && favorites.getStops().length > 0) {
@@ -165,26 +165,31 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void listFavoritesTelegram(ApiClient client, String chatId, String userId) {
-		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
-			BusMilanoFavorites favorites = mongoTemplate.findById(userId, BusMilanoFavorites.class);
-			if (favorites.getStops() != null && favorites.getStops().length > 0) {
-				StringBuilder message = new StringBuilder("Fermate preferite:");
-				for (BusMilanoStop stop : favorites.getStops()) {
-					message.append("\n" + stop.getName() + " /ferm" + stop.getId());
-					message.append(" (rimuovi /unfav" + stop.getId() + ")");
-				}
-				client.sendMessage(chatId, message.toString());
-				client.sendMarkdownMessage(chatId,
-						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)",
-						true);
-			} else {
-				client.sendMessage(chatId, "Non hai salvato fermate preferite.");
-			}
-		} else {
-			client.sendMessage(chatId, "Non hai salvato fermate preferite.");
-		}
-	}
+	// public void listFavoritesTelegram(ApiClient client, String chatId, String
+	// userId) {
+	// if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)),
+	// BusMilanoFavorites.class)) {
+	// BusMilanoFavorites favorites = mongoTemplate.findById(userId,
+	// BusMilanoFavorites.class);
+	// if (favorites.getStops() != null && favorites.getStops().length > 0) {
+	// StringBuilder message = new StringBuilder("Fermate preferite:");
+	// for (BusMilanoStop stop : favorites.getStops()) {
+	// message.append("\n" + stop.getName() + " /ferm" + stop.getId());
+	// message.append(" (rimuovi /unfav" + stop.getId() + ")");
+	// }
+	// client.sendMessage(chatId, message.toString());
+	// client.sendMarkdownMessage(chatId,
+	// "_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i
+	// tuoi amici o lasciando una valutazione a questo_
+	// [link](https://storebot.me/bot/busmilanobot)",
+	// true);
+	// } else {
+	// client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+	// }
+	// } else {
+	// client.sendMessage(chatId, "Non hai salvato fermate preferite.");
+	// }
+	// }
 
 	public void listFavoritesMessenger(ApiClient client, String chatId, String userId) {
 		if (mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanoFavorites.class)) {
@@ -265,13 +270,13 @@ public class BusMilanoBotService {
 		if (text.startsWith(PLUS_SIGN)) {
 			String stopId = text.substring(1, 6);
 			addFavorite(client, stopId, chatId, userId);
-			listFavoritesTelegramNew(client, chatId, userId);
+			listFavoritesTelegram(client, chatId, userId);
 			return;
 		}
 		if (text.startsWith(MINUS_SIGN)) {
 			String stopId = text.substring(1, 6);
 			removeFavorite(client, stopId, chatId, userId);
-			listFavoritesTelegramNew(client, chatId, userId);
+			listFavoritesTelegram(client, chatId, userId);
 			return;
 		}
 		if (text.startsWith(BUS_STOP)) {
@@ -280,9 +285,13 @@ public class BusMilanoBotService {
 		try {
 			Long.parseLong(text);
 			ObjectNode response = getInfo(text);
-			List<String> list = getResponseMessage(response, text, userId);
-			for (String message : list) {
-				client.sendMarkdownMessage(chatId, message, true);
+			List<TelegramRequest> list = getResponseMessageTelegram(response, chatId, text, userId);
+			for (TelegramRequest message : list) {
+				try {
+					client.sendRequest(message);
+				} catch (Exception e) {
+					log.error("Error sending request to " + chatId, e);
+				}
 			}
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
@@ -322,9 +331,37 @@ public class BusMilanoBotService {
 		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
 	}
 
-	private List<String> getResponseMessage(ObjectNode json, String stopId, String id) {
-		List<String> result = new ArrayList<>(json.get("Lines").size() + 1);
-		result.add("*Fermata " + json.get("StopPoint").get("Description") + "*");
+	// private List<String> getResponseMessage(ObjectNode json, String stopId,
+	// String id) {
+	// List<String> result = new ArrayList<>(json.get("Lines").size() + 1);
+	// result.add("*Fermata " + json.get("StopPoint").get("Description") + "*");
+	// for (JsonNode line : json.get("Lines")) {
+	// String lineCode = line.get("Line").get("LineCode").asText();
+	// String lineDescription =
+	// line.get("Line").get("LineDescription").asText();
+	// String waitMessage = line.get("WaitMessage").isNull() ? "-" :
+	// line.get("WaitMessage").asText();
+	// String bookletUrl = line.get("BookletUrl").asText();
+	// String message = "Linea " + lineCode + " " + lineDescription + "\nAttesa:
+	// " + waitMessage + " ([orari]("
+	// + bookletUrl + "))";
+	// result.add(message);
+	// }
+	// if
+	// (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+	// BusMilanoFavorites.class)) {
+	// result.add("Aggiungi fermata ai preferiti /fav" + stopId);
+	// } else {
+	// result.add("Rimuovi fermata dai preferiti /unfav" + stopId);
+	// }
+	// stopRequested(stopId);
+	// return result;
+	// }
+
+	private List<TelegramRequest> getResponseMessageTelegram(ObjectNode json, String chatId, String stopId, String id) {
+		List<TelegramRequest> result = new ArrayList<>(json.get("Lines").size());
+		result.add(TelegramRequest.sendMessage(chatId)
+				.text("*Fermata " + json.get("StopPoint").get("Description") + "*").parseModeMarkdown());
 		for (JsonNode line : json.get("Lines")) {
 			String lineCode = line.get("Line").get("LineCode").asText();
 			String lineDescription = line.get("Line").get("LineDescription").asText();
@@ -332,13 +369,18 @@ public class BusMilanoBotService {
 			String bookletUrl = line.get("BookletUrl").asText();
 			String message = "Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
 					+ bookletUrl + "))";
-			result.add(message);
+			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown());
 		}
+		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {
-			result.add("Aggiungi fermata ai preferiti /fav" + stopId);
+			first.keyboard(Keyboard.replyKeyboard()
+					.button(PLUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " ai preferiti").row()
+					.button("/preferite"));
 		} else {
-			result.add("Rimuovi fermata dai preferiti /unfav" + stopId);
+			first.keyboard(Keyboard.replyKeyboard()
+					.button(MINUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " dai preferiti")
+					.row().button("/preferite"));
 		}
 		stopRequested(stopId);
 		return result;

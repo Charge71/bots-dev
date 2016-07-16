@@ -68,18 +68,25 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		if (json.get("message").get("from").get("username") != null) {
 			username = json.get("message").get("from").get("username").asText();
 		}
-		RssUser user = new RssUser();
-		user.setId(userId);
-		user.setChatId(chatId);
-		user.setFirstName(userFirstName);
-		if (userLastName != null) {
-			user.setLastName(userLastName);
+		RssUser user = mongoTemplate.findById(userId, RssUser.class);
+		if (user == null) {
+			user = new RssUser();
+			user.setId(userId);
+			user.setChatId(chatId);
+			user.setFirstName(userFirstName);
+			if (userLastName != null) {
+				user.setLastName(userLastName);
+			}
+			if (username != null) {
+				user.setUsername(username);
+			}
+			mongoTemplate.save(user);
+			client.sendMessage(chatId, messages.getMessage(user.getLang(), "start", user.getFirstName()));
 		}
-		if (username != null) {
-			user.setUsername(username);
+		if (!"/start".equals(json.get("message").get("text").asText())) {
+			String url = json.get("message").get("text").asText().substring(7);
+			add(url, user);
 		}
-		mongoTemplate.save(user);
-		client.sendMessage(chatId, messages.getMessage(user.getLang(), "start", user.getFirstName()));
 	}
 
 	@BotCommand("/add")
