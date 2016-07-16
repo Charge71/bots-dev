@@ -1,5 +1,7 @@
 package com.charge71.telegram.bots;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -84,8 +86,13 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 			client.sendMessage(chatId, messages.getMessage(user.getLang(), "start", user.getFirstName()));
 		}
 		if (!"/start".equals(json.get("message").get("text").asText())) {
-			String url = json.get("message").get("text").asText().substring(7);
-			add(url, user);
+			String url;
+			try {
+				url = URLDecoder.decode(json.get("message").get("text").asText().substring(7), "UTF-8");
+				add(url, user);
+			} catch (UnsupportedEncodingException e) {
+				log.error("Encoding error", e);
+			}
 		}
 	}
 
