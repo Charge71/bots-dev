@@ -376,11 +376,11 @@ public class BusMilanoBotService {
 				BusMilanoFavorites.class)) {
 			first.keyboard(Keyboard.replyKeyboard()
 					.button(PLUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " ai preferiti").row()
-					.button("/preferite"));
+					.button("/preferite").resize());
 		} else {
 			first.keyboard(Keyboard.replyKeyboard()
 					.button(MINUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " dai preferiti")
-					.row().button("/preferite"));
+					.row().button("/preferite").resize());
 		}
 		stopRequested(stopId);
 		return result;
