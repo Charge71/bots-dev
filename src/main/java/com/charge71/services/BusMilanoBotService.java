@@ -149,7 +149,7 @@ public class BusMilanoBotService {
 				}
 				TelegramRequest req = TelegramRequest.sendMessage(chatId)
 						.text("_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)")
-						.disableWebPagePreview().keyboard(buttons);
+						.disableWebPagePreview().parseModeMarkdown().keyboard(buttons);
 				try {
 					client.sendRequest(req);
 				} catch (Exception e) {
@@ -259,11 +259,14 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void sendStopInfoTelegram(ApiClient client, String chatId, String stopId, String userId) {
+	public void sendStopInfoTelegram(ApiClient client, String chatId, String text, String userId) {
+		if (text.startsWith(BUS_STOP)) {
+			text = text.substring(1, 6);
+		}
 		try {
-			Long.parseLong(stopId);
-			ObjectNode response = getInfo(stopId);
-			List<String> list = getResponseMessage(response, stopId, userId);
+			Long.parseLong(text);
+			ObjectNode response = getInfo(text);
+			List<String> list = getResponseMessage(response, text, userId);
 			for (String message : list) {
 				client.sendMarkdownMessage(chatId, message, true);
 			}
@@ -275,12 +278,12 @@ public class BusMilanoBotService {
 				client.sendMessage(chatId,
 						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 			} else {
-				log.error("Errore su codice: " + stopId, e);
+				log.error("Errore su codice: " + text, e);
 				client.sendMessage(chatId,
 						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 			}
 		} catch (RestClientException e) {
-			log.error("Errore su codice: " + stopId, e);
+			log.error("Errore su codice: " + text, e);
 			client.sendMessage(chatId,
 					"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 		}
