@@ -36,7 +36,7 @@ public class TestTelegramMessage implements RequestSender<TelegramRequest, Objec
 				TelegramRequest.sendMessage("148883640").text("Ciao")
 							.keyboard(Keyboard
 									.replyKeyboard()
-									.button(new String(Character.toChars(10133)) + "11334")
+									.button(new String(Character.toChars(10134)) + "11334")
 		//+ new
 		// String(Character.toChars(127463)) + " English")
 		.row()

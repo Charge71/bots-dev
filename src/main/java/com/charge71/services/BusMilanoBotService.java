@@ -265,7 +265,13 @@ public class BusMilanoBotService {
 		if (text.startsWith(PLUS_SIGN)) {
 			String stopId = text.substring(1, 6);
 			addFavorite(client, stopId, chatId, userId);
-			listFavoritesTelegram(client, chatId, userId);
+			listFavoritesTelegramNew(client, chatId, userId);
+			return;
+		}
+		if (text.startsWith(MINUS_SIGN)) {
+			String stopId = text.substring(1, 6);
+			removeFavorite(client, stopId, chatId, userId);
+			listFavoritesTelegramNew(client, chatId, userId);
 			return;
 		}
 		if (text.startsWith(BUS_STOP)) {
