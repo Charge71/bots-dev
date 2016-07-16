@@ -145,7 +145,7 @@ public class BusMilanoBotService {
 						buttons.row();
 					}
 					BusMilanoStop stop = favorites.getStops()[i];
-					buttons.button(BUS_STOP + stop.getId() + " " + stop.getName());
+					buttons.button(BUS_STOP + " " + stop.getId() + " " + stop.getName());
 				}
 				TelegramRequest req = TelegramRequest.sendMessage(chatId)
 						.text("_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)")
