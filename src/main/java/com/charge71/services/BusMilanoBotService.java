@@ -369,7 +369,7 @@ public class BusMilanoBotService {
 			String bookletUrl = line.get("BookletUrl").asText();
 			String message = "Linea " + lineCode + " " + lineDescription + "\nAttesa: " + waitMessage + " ([orari]("
 					+ bookletUrl + "))";
-			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown());
+			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown().disableWebPagePreview());
 		}
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
