@@ -261,7 +261,8 @@ public class BusMilanoBotService {
 
 	public void sendStopInfoTelegram(ApiClient client, String chatId, String text, String userId) {
 		if (text.startsWith(BUS_STOP)) {
-			text = text.substring(1, 6);
+			text = text.substring(2, 7);
+			log.debug("***" + text);
 		}
 		try {
 			Long.parseLong(text);
