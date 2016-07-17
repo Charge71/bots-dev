@@ -213,7 +213,7 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "en"),
 					MeetUser.class);
 			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
-					.text(messages.getMessage("en", "help", user.getFirstName())).keyboard(LANG_KEYBOARD);
+					.text(messages.getMessage("en", "help", user.getFirstName())).hideKeyboard();
 			try {
 				client.sendRequest(tr);
 			} catch (Exception e) {
@@ -224,7 +224,7 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "it"),
 					MeetUser.class);
 			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
-					.text(messages.getMessage("it", "help", user.getFirstName())).keyboard(LANG_KEYBOARD);
+					.text(messages.getMessage("it", "help", user.getFirstName())).hideKeyboard();
 			try {
 				client.sendRequest(tr);
 			} catch (Exception e) {
