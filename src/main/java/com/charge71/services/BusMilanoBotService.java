@@ -234,6 +234,9 @@ public class BusMilanoBotService {
 
 	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
 		try {
+			if (stopId.length() > 5) {
+				stopId = stopId.substring(0, 5);
+			}
 			Long.parseLong(stopId);
 			ObjectNode response = getInfo(stopId);
 			client.sendMessage(chatId, "Fermata " + response.get("StopPoint").get("Description"));
