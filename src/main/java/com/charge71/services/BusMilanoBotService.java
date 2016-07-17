@@ -283,6 +283,9 @@ public class BusMilanoBotService {
 			text = text.substring(2, 7);
 		}
 		try {
+			if (text.length() > 5) {
+				text = text.substring(0, 5);
+			}
 			Long.parseLong(text);
 			ObjectNode response = getInfo(text);
 			List<TelegramRequest> list = getResponseMessageTelegram(response, chatId, text, userId);
