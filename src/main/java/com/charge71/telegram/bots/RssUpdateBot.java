@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
-import com.charge71.model.MeetUser;
 import com.charge71.model.RssSubscriptions;
 import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
@@ -211,7 +210,7 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		} else if (json.get("message").get("text") != null
 				&& json.get("message").get("text").asText().startsWith(ENG_FLAG)) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "en"),
-					MeetUser.class);
+					RssUser.class);
 			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
 					.text(messages.getMessage("en", "help", user.getFirstName())).hideKeyboard();
 			try {
@@ -222,7 +221,7 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		} else if (json.get("message").get("text") != null
 				&& json.get("message").get("text").asText().startsWith(ITA_FLAG)) {
 			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "it"),
-					MeetUser.class);
+					RssUser.class);
 			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
 					.text(messages.getMessage("it", "help", user.getFirstName())).hideKeyboard();
 			try {
