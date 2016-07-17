@@ -11,3 +11,17 @@ en.help=This bot lets you subscribe to up to four RSS feeds updates.\n\nAvailabl
 en.restart=You have not started the bot yet, please type /start to do it.
 en.unknown=Unknown command.
 en.broadcast=Thank you for using Rss Update Bot. Please take a second to rate it: https://telegram.me/storebot?start=rssupdatebot
+
+it.start=Ciao {}! Questo bot ti permette di ricevere aggiornamenti da feed RSS. Usa /add per aggiungere un nuovo feed o /help maggiori informazioni.
+it.add=Inserisci l'indirizzo del feed RSS che vuoi aggiungere.
+it.rsserror=C'è stato un errore nell'aggiungere il feed.
+it.rssadd=Aggiunto feed {}.
+it.remove=Seleziona il feed da rimuovere.
+it.rssremove=Rimosso feed {}.
+it.nofav=Non hai feed configurati.
+it.maxfav=Non puoi avere più di quattro feed configurati.
+it.already=Hai già aggiunto il feed {}.
+it.help=Questo bot ti permette di ricevere aggiornamenti da feed RSS.\n\nComandi disponibili:\n\n/add Aggiungi un nuovo feed.\n/remove Rimuovi un feed.\n/stop Esci dal bot.\n/help Mostra questo messaggio.\n\nEsempi di feed:\nhttp://www.lastampa.it/rss.xml\nhttp://www.gazzetta.it/rss/home.xml
+it.restart=You have not started the bot yet, please type /start to do it.
+it.unknown=Unknown command.
+it.broadcast=Thank you for using Rss Update Bot. Please take a second to rate it: https://telegram.me/storebot?start=rssupdatebot

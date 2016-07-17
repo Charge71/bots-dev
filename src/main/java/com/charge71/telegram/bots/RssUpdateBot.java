@@ -15,12 +15,14 @@ import org.springframework.http.HttpStatus;
 
 import com.charge71.framework.ApiClient;
 import com.charge71.framework.PlatformApiAware;
+import com.charge71.model.MeetUser;
 import com.charge71.model.RssSubscriptions;
 import com.charge71.model.RssSubscriptions.RssFeed;
 import com.charge71.model.RssUser;
 import com.charge71.services.RssService;
 import com.charge71.services.RssService.RssHandler;
 import com.charge71.telegramapi.TelegramRequest;
+import com.charge71.telegramapi.TelegramRequest.Keyboard;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,6 +34,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements RssHandler {
 
 	private static Logger log = Logger.getLogger(RssUpdateBot.class);
+
+	private static String ENG_FLAG = new String(Character.toChars(127468)) + new String(Character.toChars(127463));
+	private static String ITA_FLAG = new String(Character.toChars(127470)) + new String(Character.toChars(127481));
+
+	private static Keyboard LANG_KEYBOARD = Keyboard.replyKeyboard().resize().button(ENG_FLAG + " English").row()
+			.button(ITA_FLAG + " Italiano").row();
 
 	@Autowired
 	private RssService rssService;
@@ -83,7 +91,15 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 				user.setUsername(username);
 			}
 			mongoTemplate.save(user);
-			client.sendMessage(chatId, messages.getMessage(user.getLang(), "start", user.getFirstName()));
+			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
+					.text(messages.getMessage(user.getLang(), "start", user.getFirstName())).keyboard(LANG_KEYBOARD);
+			// client.sendMessage(chatId, messages.getMessage(user.getLang(),
+			// "start", user.getFirstName()));
+			try {
+				client.sendRequest(tr);
+			} catch (Exception e) {
+				log.error("Request error", e);
+			}
 		}
 		if (!"/start".equals(json.get("message").get("text").asText())) {
 			String url;
@@ -117,7 +133,15 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		String userId = json.get("message").get("from").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (user != null) {
-			client.sendMessage(chatId, messages.getMessage(user.getLang(), "help"));
+			TelegramRequest tr = TelegramRequest.sendMessage(chatId).text(messages.getMessage(user.getLang(), "help"))
+					.keyboard(LANG_KEYBOARD);
+			// client.sendMessage(chatId, messages.getMessage(user.getLang(),
+			// "help"));
+			try {
+				client.sendRequest(tr);
+			} catch (Exception e) {
+				log.error("Request error", e);
+			}
 		} else {
 			client.sendMessage(chatId, messages.getMessage("en", "restart"));
 		}
@@ -164,9 +188,9 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
 		String userId = json.get("message").get("from").get("id").asText();
+		String chatId = json.get("message").get("chat").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
 		if (json.get("message").get("text") != null && json.get("message").get("text").asText().startsWith("\u274C")) {
-			String chatId = json.get("message").get("chat").get("id").asText();
 			int index = Integer.valueOf(json.get("message").get("text").asText().substring(2, 3)) - 1;
 			if (index == -1) {
 				ObjectNode buttons = JsonNodeFactory.instance.objectNode();
@@ -184,6 +208,28 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 			client.sendButtons(chatId, messages.getMessage(user.getLang(), "rssremove", feed.getName()),
 					buttons.toString());
 			log.debug("Removed " + feed.getUrl() + " from " + userId);
+		} else if (json.get("message").get("text") != null
+				&& json.get("message").get("text").asText().startsWith(ENG_FLAG)) {
+			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "en"),
+					MeetUser.class);
+			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
+					.text(messages.getMessage("en", "help", user.getFirstName())).keyboard(LANG_KEYBOARD);
+			try {
+				client.sendRequest(tr);
+			} catch (Exception e) {
+				log.error("Request error", e);
+			}
+		} else if (json.get("message").get("text") != null
+				&& json.get("message").get("text").asText().startsWith(ITA_FLAG)) {
+			mongoTemplate.findAndModify(Query.query(Criteria.where("id").is(userId)), new Update().set("lang", "it"),
+					MeetUser.class);
+			TelegramRequest tr = TelegramRequest.sendMessage(chatId)
+					.text(messages.getMessage("it", "help", user.getFirstName())).keyboard(LANG_KEYBOARD);
+			try {
+				client.sendRequest(tr);
+			} catch (Exception e) {
+				log.error("Request error", e);
+			}
 		} else if (json.get("message").get("reply_to_message") != null) {
 			if (json.get("message").get("reply_to_message").get("text").asText()
 					.equals(messages.getMessage(user.getLang(), "add"))) {
