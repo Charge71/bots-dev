@@ -224,12 +224,12 @@ public class BusMilanoBotService {
 	}
 
 	public void sendInfoMessenger(ApiClient client, String chatId) {
-		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 	}
 
 	public void sendInfoTelegram(ApiClient client, String chatId) {
-		client.sendMessage(chatId, "Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 	}
 
 	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
@@ -246,25 +246,25 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
-					"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				client.sendMessage(chatId,
-						"Il codice inserito non è corretto. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+						"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 				client.sentStructuredMessage(chatId,
 						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			} else {
 				log.error("Errore su codice: " + stopId, e);
 				client.sendMessage(chatId,
-						"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+						"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 				client.sentStructuredMessage(chatId,
 						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
 			client.sendMessage(chatId,
-					"Errore nell'elaborazione del codice. Inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
+					"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 		}
 	}
