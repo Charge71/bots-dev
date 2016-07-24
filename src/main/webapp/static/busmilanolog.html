@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bus Milano Log</title>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+$(document).ready(function(){
+	$.ajax({url: "log/204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA?offset=0&limit=20",
+			success: function(result){
+        		$.each(result.items, function(k,v){
+        			$(".log tbody").append('<tr><td>' + v.timestamp + '</td><td>' + v.userId + '</td><td>' + v.stopId + '</td></tr>');
+        		});
+    }});
+});
+</script>
+</head>
+<body>
+	<table class="log">
+		<thead><tr><th>Timestamp</th><th>User Id</th><th>Stop Id</th></tr></thead>
+		<tbody></tbody>
+	</table>
+</body>
+</html>
