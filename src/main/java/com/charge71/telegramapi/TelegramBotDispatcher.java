@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.charge71.framework.AdsProvider;
+import com.charge71.framework.LogProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.lang.MessageHelper;
 import com.charge71.telegramapi.annotations.BotCommand;
@@ -116,7 +117,20 @@ public class TelegramBotDispatcher {
 			log.warn("Not AdsProvider bot " + bot.getClass().getName());
 			return;
 		}
-		((AdsProvider)bot).handle(request, response);
+		((AdsProvider) bot).handle(request, response);
+	}
+
+	public ObjectNode log(String token, int offset, int limit) {
+		Object bot = bots.get(token);
+		if (bot == null) {
+			log.warn("Not found bot with token " + token);
+			return null;
+		}
+		if (!(bot instanceof LogProvider)) {
+			log.warn("Not AdsProvider bot " + bot.getClass().getName());
+			return null;
+		}
+		return ((LogProvider) bot).getLog(offset, limit);
 	}
 
 	public List<String> getBotClasses() {

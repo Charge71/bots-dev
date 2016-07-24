@@ -9,15 +9,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.charge71.framework.AdsProvider;
+import com.charge71.framework.LogProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.services.BusMilanoBotService;
 import com.charge71.telegramapi.TelegramRequest;
 import com.charge71.telegramapi.annotations.BotCommand;
 import com.charge71.telegramapi.annotations.TelegramBot;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @TelegramBot("204159588:AAF3Y-4eKSheRYFlfOPhZ_Xvn1AcZLDgvqA")
-public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements AdsProvider {
+public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> implements AdsProvider, LogProvider {
 
 	private static final Logger log = Logger.getLogger(BusMilanoBot.class);
 
@@ -118,6 +120,14 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		} catch (IOException e) {
 			log.error("Ads error", e);
 		}
+	}
+
+	@Override
+	public ObjectNode getLog(int offset, int limit) {
+		ObjectNode response = JsonNodeFactory.instance.objectNode();
+		response.put("count", 0);
+		response.putArray("items");
+		return response;
 	}
 
 }

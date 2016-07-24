@@ -59,6 +59,12 @@ public class WebhookController {
 		botDispatcher.ads(token, request, response);
 	}
 
+	@RequestMapping(value = "/log/{token}", method = RequestMethod.GET)
+	public ObjectNode log(@PathVariable("token") String token, @RequestParam("offset") int offset,
+			@RequestParam("limit") int limit) {
+		return botDispatcher.log(token, offset, limit);
+	}
+
 	@RequestMapping(value = "/webhook/{token}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> webhook(@PathVariable("token") String token, @RequestBody ObjectNode json) {
 		long updateId = json.get("update_id").asLong();
