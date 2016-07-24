@@ -1,10 +1,14 @@
 package com.charge71.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.charge71.framework.ApiClient;
 import com.charge71.model.BusMilanoFavorites;
 import com.charge71.model.BusMilanoFavorites.BusMilanoStop;
+import com.charge71.model.BusMilanoLogEntry;
 import com.charge71.model.BusMilanotUser;
 import com.charge71.telegramapi.TelegramRequest;
 import com.charge71.telegramapi.TelegramRequest.Keyboard;
@@ -33,6 +38,8 @@ public class BusMilanoBotService {
 	private static final String MINUS_SIGN = new String(Character.toChars(10134));
 
 	private static final Logger log = Logger.getLogger(BusMilanoBotService.class);
+
+	private static final FastDateFormat formatter = FastDateFormat.getInstance("yyyyMMddHHmmss");
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -329,6 +336,19 @@ public class BusMilanoBotService {
 		}
 	}
 
+	public ObjectNode log(int offset, int limit) {
+		Query query = new Query().with(new Sort(Direction.DESC, "timestamp")).skip(offset).limit(limit);
+		List<BusMilanoLogEntry> entries = mongoTemplate.find(query, BusMilanoLogEntry.class);
+		ObjectNode response = JsonNodeFactory.instance.objectNode();
+		response.put("count", entries.size());
+		ArrayNode array = response.putArray("items");
+		for (BusMilanoLogEntry entry : entries) {
+			array.addObject().put("timestamp", formatter.format(entry.getTimestamp())).put("userId", entry.getUserId())
+					.put("stopId", entry.getStopId());
+		}
+		return response;
+	}
+
 	//
 
 	private ObjectNode getInfo(String code) {
@@ -364,7 +384,8 @@ public class BusMilanoBotService {
 	// return result;
 	// }
 
-	private List<TelegramRequest> getResponseMessageTelegram(ObjectNode json, String chatId, String stopId, String id) {
+	private List<TelegramRequest> getResponseMessageTelegram(ObjectNode json, String chatId, String stopId,
+			String userId) {
 		List<TelegramRequest> result = new ArrayList<>(json.get("Lines").size());
 		result.add(TelegramRequest.sendMessage(chatId)
 				.text("*Fermata " + json.get("StopPoint").get("Description") + "*").parseModeMarkdown());
@@ -378,7 +399,7 @@ public class BusMilanoBotService {
 			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown().disableWebPagePreview());
 		}
 		TelegramRequest first = result.get(0);
-		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(id).and("stops.id").is(stopId)),
+		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {
 			first.keyboard(Keyboard.replyKeyboard()
 					.button(PLUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " ai preferiti").row()
@@ -388,11 +409,16 @@ public class BusMilanoBotService {
 					.button(MINUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " dai preferiti")
 					.row().button("/preferite").resize());
 		}
-		stopRequested(stopId);
+		stopRequested(userId, stopId);
 		return result;
 	}
 
-	private void stopRequested(String stopId) {
+	private void stopRequested(String userId, String stopId) {
+		BusMilanoLogEntry entry = new BusMilanoLogEntry();
+		entry.setStopId(stopId);
+		entry.setUserId(userId);
+		entry.setTimestamp(new Date());
+		mongoTemplate.save(entry);
 		log.info("STOP REQUESTED " + stopId);
 	}
 
@@ -432,7 +458,7 @@ public class BusMilanoBotService {
 		return response;
 	}
 
-	private ObjectNode getResponseMessageMessenger(ObjectNode json, String stopId, String id) {
+	private ObjectNode getResponseMessageMessenger(ObjectNode json, String stopId, String userId) {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
 		ObjectNode attachment = message.putObject("attachment");
@@ -453,7 +479,7 @@ public class BusMilanoBotService {
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
 		}
-		stopRequested(stopId);
+		stopRequested(userId, stopId);
 		return response;
 	}
 }
