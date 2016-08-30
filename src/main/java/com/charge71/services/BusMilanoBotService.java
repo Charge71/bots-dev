@@ -423,8 +423,6 @@ public class BusMilanoBotService {
 						.parseModeMarkdown());
 			}
 		}
-		result.add(TelegramRequest.sendMessage(chatId)
-				.text("*Fermata " + json.get("StopPoint").get("Description") + "*").parseModeMarkdown());
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {
