@@ -362,7 +362,7 @@ public class BusMilanoBotService {
 		}
 		return response;
 	}
-	
+
 	public String getAdUrl(String stopId) {
 		return props.getProperty(stopId);
 	}
@@ -416,12 +416,10 @@ public class BusMilanoBotService {
 					+ bookletUrl + "))";
 			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown().disableWebPagePreview());
 		}
-		if (userId.equals("148883640")) { // FIXME test
-			if (props.containsKey(stopId)) {
-				result.add(TelegramRequest.sendMessage(chatId)
-						.text("*Novità:* [consigliato nelle vicinanze](" + adsBaseUrl + "?stopId=" + stopId + ")")
-						.parseModeMarkdown());
-			}
+		if (props.containsKey(stopId)) {
+			result.add(TelegramRequest.sendMessage(chatId)
+					.text("*Novità:* [consigliato nelle vicinanze](" + adsBaseUrl + "?stopId=" + stopId + ")")
+					.parseModeMarkdown());
 		}
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
