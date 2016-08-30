@@ -253,7 +253,7 @@ public class BusMilanoBotService {
 		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 	}
 
-	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId) {
+	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId, String adsBaseUrl) {
 		try {
 			if (stopId.length() > 5) {
 				stopId = stopId.substring(0, 5);
@@ -263,7 +263,7 @@ public class BusMilanoBotService {
 			client.sendMessage(chatId, "Fermata " + response.get("StopPoint").get("Description"));
 			ObjectNode message = getResponseMessageMessenger(response, stopId, userId);
 			client.sentStructuredMessage(chatId, message);
-			message = getResponseButtonsMessenger(response, stopId, userId);
+			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
@@ -455,7 +455,7 @@ public class BusMilanoBotService {
 		return response;
 	}
 
-	private ObjectNode getResponseButtonsMessenger(ObjectNode json, String stopId, String id) {
+	private ObjectNode getResponseButtonsMessenger(ObjectNode json, String stopId, String id, String adsBaseUrl) {
 		ObjectNode response = JsonNodeFactory.instance.objectNode();
 		ObjectNode message = response.putObject("message");
 		ObjectNode attachment = message.putObject("attachment");
@@ -478,6 +478,12 @@ public class BusMilanoBotService {
 		button2.put("type", "postback");
 		button2.put("title", "lista preferite");
 		button2.put("payload", "favourites");
+		if (props.containsKey(stopId)) {
+			ObjectNode button3 = buttons.addObject();
+			button3.put("type", "web_url");
+			button3.put("title", "scopri nelle vicinanze");
+			button3.put("url", adsBaseUrl + "?stopId=" + stopId);
+		}
 		return response;
 	}
 

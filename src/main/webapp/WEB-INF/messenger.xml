@@ -10,6 +10,7 @@
 				<value>com.charge71.messenger.bots.BusMilanoBot</value>
 			</list>
 		</property>
+		<property name="baseUrl" value="http://dev-charge71.rhcloud.com"/>
 	</bean>
 	
 </beans>

@@ -1,8 +1,12 @@
 package com.charge71.messenger.bots;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.charge71.framework.AdsProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.messengerapi.MessengerRequest;
 import com.charge71.messengerapi.annotations.BotMessage;
@@ -12,12 +16,14 @@ import com.charge71.services.BusMilanoBotService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @MessengerBot(name = "busmilanobot", token = "EAADKP2ZBkov0BAAV8pkwkJmzaiO0j1WRMUEYEZA89wO4ZCY8WRrz2U2knVZC4BWJAZCrNBkgEfYmZCUxP8zgZC0iGUq9hdniZBaHubBFJkOZAOe4kGBw1OY0HxO1TkZBZBsxFoigAOz0MgX8Le29fIeYkk64oKFSuFfFo3lluYYmY3wKwZDZD")
-public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode> {
+public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode> implements AdsProvider {
 
 	private static Logger log = Logger.getLogger(BusMilanoBot.class);
 
 	@Autowired
 	private BusMilanoBotService service;
+
+	private String adsBaseUrl;
 
 	@BotMessage
 	public void message(ObjectNode json) {
@@ -27,7 +33,7 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		service.createUser(client, userId, chatId);
 		if (json.get("entry").get(0).get("messaging").get(0).get("message").get("text") != null) {
 			String text = json.get("entry").get(0).get("messaging").get(0).get("message").get("text").asText();
-			service.sendStopInfoMessenger(client, chatId, text, userId);
+			service.sendStopInfoMessenger(client, chatId, text, userId, adsBaseUrl);
 		} else {
 			service.sendInfoMessenger(client, chatId);
 		}
@@ -40,9 +46,9 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.createUser(client, userId, chatId);
-		service.sendStopInfoMessenger(client, chatId, text, userId);
+		service.sendStopInfoMessenger(client, chatId, text, userId, adsBaseUrl);
 	}
-	
+
 	@BotPostback(value = "fav", isPrefix = true)
 	public void fav(ObjectNode json, String postback) {
 		log.debug("fav start");
@@ -67,5 +73,15 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.listFavoritesMessenger(client, chatId, userId);
+	}
+
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setAdsBaseUrl(String adsBaseUrl) {
+		this.adsBaseUrl = adsBaseUrl;
 	}
 }

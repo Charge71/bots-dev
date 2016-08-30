@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import com.charge71.framework.AdsProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.messengerapi.annotations.BotMessage;
 import com.charge71.messengerapi.annotations.BotPostback;
@@ -24,6 +25,7 @@ public class MessengerBotDispatcher {
 	private AutowireCapableBeanFactory beanFactory;
 
 	private List<String> botClasses;
+	private String baseUrl;
 
 	private Map<String, Object> bots = new HashMap<String, Object>();
 	private Map<String, Method> messages = new HashMap<String, Method>();
@@ -64,8 +66,11 @@ public class MessengerBotDispatcher {
 						}
 					}
 				}
-				if (bot instanceof PlatformApiAware<?,?>) {
-					((PlatformApiAware<MessengerRequest,ObjectNode>) bot).setClient(new MessengerApiClient(token));
+				if (bot instanceof PlatformApiAware<?, ?>) {
+					((PlatformApiAware<MessengerRequest, ObjectNode>) bot).setClient(new MessengerApiClient(token));
+				}
+				if (bot instanceof AdsProvider) {
+					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/ads/" + token);
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
