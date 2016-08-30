@@ -121,6 +121,7 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 			String url = service.getAdUrl(stopId);
 			if (url != null) {
 				response.sendRedirect(url);
+				log.info("Handled AD " + stopId + " to " + url);
 			}
 		} catch (IOException e) {
 			log.error("Ads error", e);
