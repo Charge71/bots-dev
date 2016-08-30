@@ -1,8 +1,11 @@
 package com.charge71.services;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
@@ -45,6 +48,17 @@ public class BusMilanoBotService {
 	private MongoTemplate mongoTemplate;
 
 	private RestTemplate restTemplate = new RestTemplate();
+
+	private Properties props = new Properties();
+
+	public void init() {
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream("busmilanoads.props");
+		try {
+			props.load(new InputStreamReader(in, "UTF-8"));
+		} catch (Exception e) {
+			log.error("Error loading ad props.", e);
+		}
+	}
 
 	public void createUser(ApiClient client, String userId, String chatId) {
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanotUser.class)) {
@@ -276,7 +290,7 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void sendStopInfoTelegram(ApiClient client, String chatId, String text, String userId) {
+	public void sendStopInfoTelegram(ApiClient client, String chatId, String text, String userId, String adsBaseUrl) {
 		if (text.startsWith(PLUS_SIGN)) {
 			String stopId = text.substring(1, 6);
 			addFavorite(client, stopId, chatId, userId);
@@ -298,7 +312,7 @@ public class BusMilanoBotService {
 			}
 			Long.parseLong(text);
 			ObjectNode response = getInfo(text);
-			List<TelegramRequest> list = getResponseMessageTelegram(response, chatId, text, userId);
+			List<TelegramRequest> list = getResponseMessageTelegram(response, chatId, text, userId, adsBaseUrl);
 			for (TelegramRequest message : list) {
 				try {
 					client.sendRequest(message);
@@ -348,6 +362,10 @@ public class BusMilanoBotService {
 		}
 		return response;
 	}
+	
+	public String getAdUrl(String stopId) {
+		return props.getProperty(stopId);
+	}
 
 	//
 
@@ -385,7 +403,7 @@ public class BusMilanoBotService {
 	// }
 
 	private List<TelegramRequest> getResponseMessageTelegram(ObjectNode json, String chatId, String stopId,
-			String userId) {
+			String userId, String adsBaseUrl) {
 		List<TelegramRequest> result = new ArrayList<>(json.get("Lines").size());
 		result.add(TelegramRequest.sendMessage(chatId)
 				.text("*Fermata " + json.get("StopPoint").get("Description") + "*").parseModeMarkdown());
@@ -398,6 +416,15 @@ public class BusMilanoBotService {
 					+ bookletUrl + "))";
 			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown().disableWebPagePreview());
 		}
+		if (userId.equals("148883640")) { // FIXME test
+			if (props.containsKey(stopId)) {
+				result.add(TelegramRequest.sendMessage(chatId)
+						.text("*Novità:* [consigliato nelle vicinanze](" + adsBaseUrl + "?stopId=" + stopId + ")")
+						.parseModeMarkdown());
+			}
+		}
+		result.add(TelegramRequest.sendMessage(chatId)
+				.text("*Fermata " + json.get("StopPoint").get("Description") + "*").parseModeMarkdown());
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {

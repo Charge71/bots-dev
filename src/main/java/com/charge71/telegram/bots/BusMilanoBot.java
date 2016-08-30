@@ -22,6 +22,8 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 
 	private static final Logger log = Logger.getLogger(BusMilanoBot.class);
 
+	private String adsBaseUrl;
+
 	@Autowired
 	private BusMilanoBotService service;
 
@@ -90,7 +92,7 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		String chatId = json.get("message").get("chat").get("id").asText();
 		if (json.get("message").get("text") != null) {
 			String stopId = json.get("message").get("text").asText();
-			service.sendStopInfoTelegram(client, chatId, stopId, userId);
+			service.sendStopInfoTelegram(client, chatId, stopId, userId, adsBaseUrl);
 		} else {
 			service.sendInfoTelegram(client, chatId);
 		}
@@ -102,7 +104,7 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		String stopId = command.substring(5);
-		service.sendStopInfoTelegram(client, chatId, stopId, userId);
+		service.sendStopInfoTelegram(client, chatId, stopId, userId, adsBaseUrl);
 	}
 
 	@BotCommand("/stop")
@@ -115,7 +117,11 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			response.sendRedirect("http://www.eidosmedia.com");
+			String stopId = request.getParameter("stopId");
+			String url = service.getAdUrl(stopId);
+			if (url != null) {
+				response.sendRedirect(url);
+			}
 		} catch (IOException e) {
 			log.error("Ads error", e);
 		}
@@ -124,6 +130,11 @@ public class BusMilanoBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 	@Override
 	public ObjectNode getLog(int offset, int limit) {
 		return service.log(offset, limit);
+	}
+
+	@Override
+	public void setAdsBaseUrl(String adsBaseUrl) {
+		this.adsBaseUrl = adsBaseUrl;
 	}
 
 }

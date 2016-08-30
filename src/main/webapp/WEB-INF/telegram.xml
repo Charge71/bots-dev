@@ -12,6 +12,7 @@
 				<value>com.charge71.telegram.bots.RssUpdateBot</value>
 			</list>
 		</property>
+		<property name="baseUrl" value="http://dev-charge71.rhcloud.com"/>
 	</bean>
 	
 	<bean class="com.charge71.services.BusMilanoBotService"/>

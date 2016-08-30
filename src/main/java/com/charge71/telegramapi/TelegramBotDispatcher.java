@@ -29,6 +29,7 @@ public class TelegramBotDispatcher {
 	private AutowireCapableBeanFactory beanFactory;
 
 	private List<String> botClasses;
+	private String baseUrl;
 
 	private Map<String, Object> bots = new HashMap<String, Object>();
 	private Map<String, Map<String, Method>> methods = new HashMap<String, Map<String, Method>>();
@@ -66,6 +67,9 @@ public class TelegramBotDispatcher {
 				if (bot instanceof PlatformApiAware<?, ?>) {
 					((PlatformApiAware<TelegramRequest, ObjectNode>) bot).setClient(new TelegramApiClient(token));
 					((PlatformApiAware<?, ?>) bot).setMessages(new MessageHelper(token));
+				}
+				if (bot instanceof AdsProvider) {
+					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/ads/" + token);
 				}
 				log.info("BotDispatcher init ok for class " + botClass);
 				log.debug("Commands: " + methods.get(token).keySet());
@@ -139,6 +143,14 @@ public class TelegramBotDispatcher {
 
 	public void setBotClasses(List<String> botClasses) {
 		this.botClasses = botClasses;
+	}
+
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
 	}
 
 }

@@ -6,5 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface AdsProvider {
 
 	public void handle(HttpServletRequest request, HttpServletResponse response);
+	
+	public void setAdsBaseUrl(String adsBaseUrl);
 
 }
