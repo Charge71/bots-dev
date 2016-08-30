@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -70,7 +73,7 @@ public class MessengerBotDispatcher {
 					((PlatformApiAware<MessengerRequest, ObjectNode>) bot).setClient(new MessengerApiClient(token));
 				}
 				if (bot instanceof AdsProvider) {
-					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/ads/" + token);
+					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/mads/" + botname);
 				}
 				beanFactory.autowireBean(bot);
 				log.info("BotDispatcher init ok for class " + botClass);
@@ -121,6 +124,19 @@ public class MessengerBotDispatcher {
 				log.error("BotDispatcher error for message", e);
 			}
 		}
+	}
+	
+	public void ads(String name, HttpServletRequest request, HttpServletResponse response) {
+		Object bot = bots.get(name);
+		if (bot == null) {
+			log.warn("Not found bot with name " + name);
+			return;
+		}
+		if (!(bot instanceof AdsProvider)) {
+			log.warn("Not AdsProvider bot " + bot.getClass().getName());
+			return;
+		}
+		((AdsProvider) bot).handle(request, response);
 	}
 
 	public List<String> getBotClasses() {

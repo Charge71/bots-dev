@@ -58,6 +58,12 @@ public class WebhookController {
 		log.info("ADS " + token);
 		botDispatcher.ads(token, request, response);
 	}
+	
+	@RequestMapping(value = "/mads/{name}", method = RequestMethod.GET)
+	public void mads(@PathVariable("name") String name, HttpServletRequest request, HttpServletResponse response) {
+		log.info("ADS " + name);
+		messengerDispatcher.ads(name, request, response);
+	}
 
 	@RequestMapping(value = "/log/{token}", method = RequestMethod.GET)
 	public ObjectNode log(@PathVariable("token") String token, @RequestParam("offset") int offset,
