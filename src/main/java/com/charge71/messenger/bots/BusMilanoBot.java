@@ -1,5 +1,7 @@
 package com.charge71.messenger.bots;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,7 +79,16 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
+		try {
+			String stopId = request.getParameter("stopId");
+			String url = service.getAdUrl(stopId);
+			if (url != null) {
+				response.sendRedirect(url);
+				log.info("Handled AD " + stopId + " to " + url);
+			}
+		} catch (IOException e) {
+			log.error("Ads error", e);
+		}
 	}
 
 	@Override
