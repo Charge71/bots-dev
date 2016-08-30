@@ -131,4 +131,12 @@ public class MessengerBotDispatcher {
 		this.botClasses = botClasses;
 	}
 
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
 }
