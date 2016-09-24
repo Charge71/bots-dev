@@ -481,7 +481,7 @@ public class BusMilanoBotService {
 		if (props.containsKey(stopId)) {
 			ObjectNode button3 = buttons.addObject();
 			button3.put("type", "web_url");
-			button3.put("title", "scopri nelle vicinanze");
+			button3.put("title", "scopri qui vicino");
 			button3.put("url", adsBaseUrl + "?stopId=" + stopId);
 		}
 		return response;
