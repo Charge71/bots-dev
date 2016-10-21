@@ -427,7 +427,7 @@ public class BusMilanoBotService {
 		// survey
 		result.add(TelegramRequest.sendMessage(chatId)
 				.text("*Aiutaci a migliarare:* partecipa al nostro [sondaggio](https://goo.gl/forms/6vwaLVtH4NF3S1Aw1)")
-				.parseModeMarkdown());
+				.parseModeMarkdown().disableWebPagePreview());
 
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
