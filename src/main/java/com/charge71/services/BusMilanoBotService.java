@@ -253,7 +253,8 @@ public class BusMilanoBotService {
 		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 	}
 
-	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId, String adsBaseUrl) {
+	public void sendStopInfoMessenger(ApiClient client, String chatId, String stopId, String userId,
+			String adsBaseUrl) {
 		try {
 			if (stopId.length() > 5) {
 				stopId = stopId.substring(0, 5);
@@ -416,11 +417,18 @@ public class BusMilanoBotService {
 					+ bookletUrl + "))";
 			result.add(TelegramRequest.sendMessage(chatId).text(message).parseModeMarkdown().disableWebPagePreview());
 		}
-		if (props.containsKey(stopId)) {
-			result.add(TelegramRequest.sendMessage(chatId)
-					.text("*Novità:* [consigliato nelle vicinanze](" + adsBaseUrl + "?stopId=" + stopId + ")")
-					.parseModeMarkdown());
-		}
+		// advertising
+		// if (props.containsKey(stopId)) {
+		// result.add(TelegramRequest.sendMessage(chatId)
+		// .text("*Novità:* [consigliato nelle vicinanze](" + adsBaseUrl +
+		// "?stopId=" + stopId + ")")
+		// .parseModeMarkdown());
+		// }
+		// survey
+		result.add(TelegramRequest.sendMessage(chatId)
+				.text("*Aiutaci a migliarare:* partecipa al nostro [sondaggio](https://goo.gl/forms/6vwaLVtH4NF3S1Aw1)")
+				.parseModeMarkdown());
+
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {
@@ -478,12 +486,18 @@ public class BusMilanoBotService {
 		button2.put("type", "postback");
 		button2.put("title", "lista preferite");
 		button2.put("payload", "favourites");
-		if (props.containsKey(stopId)) {
-			ObjectNode button3 = buttons.addObject();
-			button3.put("type", "web_url");
-			button3.put("title", "scopri qui vicino");
-			button3.put("url", adsBaseUrl + "?stopId=" + stopId);
-		}
+		// advertising
+//		if (props.containsKey(stopId)) {
+//			ObjectNode button3 = buttons.addObject();
+//			button3.put("type", "web_url");
+//			button3.put("title", "scopri qui vicino");
+//			button3.put("url", adsBaseUrl + "?stopId=" + stopId);
+//		}
+		// survey
+		ObjectNode button3 = buttons.addObject();
+		button3.put("type", "web_url");
+		button3.put("title", "sondaggio Bus Milano Bot");
+		button3.put("url", "https://goo.gl/forms/6vwaLVtH4NF3S1Aw1");
 		return response;
 	}
 
