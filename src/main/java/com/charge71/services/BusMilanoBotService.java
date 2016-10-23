@@ -266,6 +266,7 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
+			client.sendMessage(chatId, "Aiutaci a migliorare, parecipa al sondaggio!");
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
@@ -496,7 +497,7 @@ public class BusMilanoBotService {
 		// survey
 		ObjectNode button3 = buttons.addObject();
 		button3.put("type", "web_url");
-		button3.put("title", "sondaggio Bus Milano Bot");
+		button3.put("title", "** SONDAGGIO **");
 		button3.put("url", "https://goo.gl/forms/6vwaLVtH4NF3S1Aw1");
 		return response;
 	}
@@ -525,4 +526,5 @@ public class BusMilanoBotService {
 		stopRequested(userId, stopId);
 		return response;
 	}
+
 }
