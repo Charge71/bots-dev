@@ -266,7 +266,8 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
-			client.sendMessage(chatId, "Aiutaci a migliorare, parecipa al sondaggio!");
+			client.sendMessage(chatId,
+					"Per sapere le novità su Bus Milano Bot segui la nostra pagina: https://www.facebook.com/busmilanobot/");
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
@@ -427,7 +428,7 @@ public class BusMilanoBotService {
 		// }
 		// survey
 		result.add(TelegramRequest.sendMessage(chatId)
-				.text("*Aiutaci a migliarare:* partecipa al nostro [sondaggio](https://goo.gl/forms/6vwaLVtH4NF3S1Aw1)")
+				.text("Per sapere le novità su Bus Milano Bot segui la nostra [pagina](https://www.facebook.com/busmilanobot/)!")
 				.parseModeMarkdown().disableWebPagePreview());
 
 		TelegramRequest first = result.get(0);
@@ -488,17 +489,17 @@ public class BusMilanoBotService {
 		button2.put("title", "lista preferite");
 		button2.put("payload", "favourites");
 		// advertising
-//		if (props.containsKey(stopId)) {
-//			ObjectNode button3 = buttons.addObject();
-//			button3.put("type", "web_url");
-//			button3.put("title", "scopri qui vicino");
-//			button3.put("url", adsBaseUrl + "?stopId=" + stopId);
-//		}
+		// if (props.containsKey(stopId)) {
+		// ObjectNode button3 = buttons.addObject();
+		// button3.put("type", "web_url");
+		// button3.put("title", "scopri qui vicino");
+		// button3.put("url", adsBaseUrl + "?stopId=" + stopId);
+		// }
 		// survey
-		ObjectNode button3 = buttons.addObject();
-		button3.put("type", "web_url");
-		button3.put("title", "** SONDAGGIO **");
-		button3.put("url", "https://goo.gl/forms/6vwaLVtH4NF3S1Aw1");
+		// ObjectNode button3 = buttons.addObject();
+		// button3.put("type", "web_url");
+		// button3.put("title", "** SONDAGGIO **");
+		// button3.put("url", "https://goo.gl/forms/6vwaLVtH4NF3S1Aw1");
 		return response;
 	}
 
