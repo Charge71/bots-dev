@@ -266,8 +266,7 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
-//			client.sendMessage(chatId,
-//					"Per sapere le novità su Bus Milano Bot segui la nostra pagina: https://www.facebook.com/busmilanobot/");
+			client.sendMessage(chatId, "Novità: usa il menù in basso a sinistra per listare le fermate preferite!");
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
@@ -436,10 +435,12 @@ public class BusMilanoBotService {
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
 				BusMilanoFavorites.class)) {
 			first.keyboard(Keyboard.replyKeyboard()
+					.button(BUS_STOP + stopId + " " + json.get("StopPoint").get("Description")).row()
 					.button(PLUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " ai preferiti").row()
 					.button("/preferite").resize());
 		} else {
 			first.keyboard(Keyboard.replyKeyboard()
+					.button(BUS_STOP + stopId + " " + json.get("StopPoint").get("Description")).row()
 					.button(MINUS_SIGN + stopId + " " + json.get("StopPoint").get("Description") + " dai preferiti")
 					.row().button("/preferite").resize());
 		}
