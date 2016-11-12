@@ -151,4 +151,10 @@ public class TelegramApiClient implements ApiClient<TelegramRequest, ObjectNode>
 		return null;
 	}
 
+	@Override
+	public ObjectNode sendSettings(ObjectNode objectNode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -121,4 +121,15 @@ public class MessengerApiClient implements ApiClient<MessengerRequest, ObjectNod
 		return null;
 	}
 
+	@Override
+	public ObjectNode sendSettings(ObjectNode objectNode) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL).path("/").path(VERSION)
+				.path("/me/thread_settings").queryParam("access_token", token);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(objectNode.toString(), headers);
+		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
+				.getBody();
+	}
+
 }

@@ -266,8 +266,8 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
-			client.sendMessage(chatId,
-					"Per sapere le novità su Bus Milano Bot segui la nostra pagina: https://www.facebook.com/busmilanobot/");
+//			client.sendMessage(chatId,
+//					"Per sapere le novità su Bus Milano Bot segui la nostra pagina: https://www.facebook.com/busmilanobot/");
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
@@ -427,9 +427,10 @@ public class BusMilanoBotService {
 		// .parseModeMarkdown());
 		// }
 		// survey
-		result.add(TelegramRequest.sendMessage(chatId)
-				.text("Per sapere le novità su Bus Milano Bot segui la nostra [pagina](https://www.facebook.com/busmilanobot/)!")
-				.parseModeMarkdown().disableWebPagePreview());
+		// result.add(TelegramRequest.sendMessage(chatId)
+		// .text("Per sapere le novità su Bus Milano Bot segui la nostra
+		// [pagina](https://www.facebook.com/busmilanobot/)!")
+		// .parseModeMarkdown().disableWebPagePreview());
 
 		TelegramRequest first = result.get(0);
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId).and("stops.id").is(stopId)),
@@ -484,10 +485,10 @@ public class BusMilanoBotService {
 			button1.put("title", "rimuovi preferita");
 			button1.put("payload", "unfav" + stopId);
 		}
-		ObjectNode button2 = buttons.addObject();
-		button2.put("type", "postback");
-		button2.put("title", "lista preferite");
-		button2.put("payload", "favourites");
+		// ObjectNode button2 = buttons.addObject();
+		// button2.put("type", "postback");
+		// button2.put("title", "lista preferite");
+		// button2.put("payload", "favourites");
 		// advertising
 		// if (props.containsKey(stopId)) {
 		// ObjectNode button3 = buttons.addObject();

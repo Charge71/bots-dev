@@ -13,8 +13,11 @@ import com.charge71.framework.PlatformApiAware;
 import com.charge71.messengerapi.MessengerRequest;
 import com.charge71.messengerapi.annotations.BotMessage;
 import com.charge71.messengerapi.annotations.BotPostback;
+import com.charge71.messengerapi.annotations.BotStartup;
 import com.charge71.messengerapi.annotations.MessengerBot;
 import com.charge71.services.BusMilanoBotService;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @MessengerBot(name = "busmilanobot", token = "EAADKP2ZBkov0BAAV8pkwkJmzaiO0j1WRMUEYEZA89wO4ZCY8WRrz2U2knVZC4BWJAZCrNBkgEfYmZCUxP8zgZC0iGUq9hdniZBaHubBFJkOZAOe4kGBw1OY0HxO1TkZBZBsxFoigAOz0MgX8Le29fIeYkk64oKFSuFfFo3lluYYmY3wKwZDZD")
@@ -75,6 +78,20 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
 		String userId = "M" + chatId;
 		service.listFavoritesMessenger(client, chatId, userId);
+	}
+
+	@BotStartup
+	public void startup() {
+		log.debug("startup start");
+		ObjectNode node = JsonNodeFactory.instance.objectNode();
+		node.put("setting_type", "call_to_actions");
+		node.put("thread_state", "existing_thread");
+		ArrayNode array = node.putArray("call_to_actions");
+		ObjectNode button = array.addObject();
+		button.put("type", "postback");
+		button.put("title", "lista preferite");
+		button.put("payload", "favourites");
+		client.sendSettings(node);
 	}
 
 	@Override

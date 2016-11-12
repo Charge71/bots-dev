@@ -17,6 +17,7 @@ import com.charge71.framework.AdsProvider;
 import com.charge71.framework.PlatformApiAware;
 import com.charge71.messengerapi.annotations.BotMessage;
 import com.charge71.messengerapi.annotations.BotPostback;
+import com.charge71.messengerapi.annotations.BotStartup;
 import com.charge71.messengerapi.annotations.MessengerBot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -53,6 +54,9 @@ public class MessengerBotDispatcher {
 				Map<String, Method> prefixPostbacks = new HashMap<String, Method>();
 				methods.put(botname, postbacks);
 				prefixMethods.put(botname, prefixPostbacks);
+				if (bot instanceof PlatformApiAware<?, ?>) {
+					((PlatformApiAware<MessengerRequest, ObjectNode>) bot).setClient(new MessengerApiClient(token));
+				}
 				Method[] ma = cbot.getMethods();
 				for (Method m : ma) {
 					BotMessage bm = m.getAnnotation(BotMessage.class);
@@ -66,11 +70,18 @@ public class MessengerBotDispatcher {
 							} else {
 								prefixPostbacks.put(bp.value(), m);
 							}
+						} else {
+							BotStartup bs = m.getAnnotation(BotStartup.class);
+							if (bs != null) {
+								try {
+									m.invoke(bot);
+									log.info("BotDispatcher executed startup method " + m.getName());
+								} catch (Exception e) {
+									log.error("BotDispatcher error for startup method " + m.getName(), e);
+								}
+							}
 						}
 					}
-				}
-				if (bot instanceof PlatformApiAware<?, ?>) {
-					((PlatformApiAware<MessengerRequest, ObjectNode>) bot).setClient(new MessengerApiClient(token));
 				}
 				if (bot instanceof AdsProvider) {
 					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/mads/" + botname);
@@ -125,7 +136,7 @@ public class MessengerBotDispatcher {
 			}
 		}
 	}
-	
+
 	public void ads(String name, HttpServletRequest request, HttpServletResponse response) {
 		Object bot = bots.get(name);
 		if (bot == null) {
