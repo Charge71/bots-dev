@@ -266,7 +266,6 @@ public class BusMilanoBotService {
 			client.sentStructuredMessage(chatId, message);
 			message = getResponseButtonsMessenger(response, stopId, userId, adsBaseUrl);
 			client.sentStructuredMessage(chatId, message);
-			client.sendMessage(chatId, "Novità: usa il menù in basso a sinistra per listare le fermate preferite!");
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
