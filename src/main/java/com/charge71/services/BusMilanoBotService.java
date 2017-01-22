@@ -525,6 +525,11 @@ public class BusMilanoBotService {
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
 		}
+		ArrayNode replies = message.putArray("quick_replies");
+		ObjectNode reply = replies.addObject();
+		reply.put("content_type", "text");
+		reply.put("title", "Ripeti " + stopId);
+		reply.put("payload", "stop" + stopId);
 		stopRequested(userId, stopId);
 		return response;
 	}
