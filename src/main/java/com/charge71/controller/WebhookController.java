@@ -122,8 +122,14 @@ public class WebhookController {
 		log.debug(name);
 		log.debug(json);
 		if (json.get("entry").get(0).get("messaging").get(0).get("message") != null) {
-			log.info("Default message");
-			messengerDispatcher.exec(name, null, json);
+			if (json.get("entry").get(0).get("messaging").get(0).get("message").get("quick_reply") != null) {
+				String postback = json.get("entry").get(0).get("messaging").get(0).get("message").get("quick_reply").get("payload").asText();
+				log.info("Postback: " + postback);
+				messengerDispatcher.exec(name, postback, json);
+			} else {
+				log.info("Default message");
+				messengerDispatcher.exec(name, null, json);
+			}
 		} else if (json.get("entry").get(0).get("messaging").get(0).get("postback") != null) {
 			String postback = json.get("entry").get(0).get("messaging").get(0).get("postback").get("payload").asText();
 			log.info("Postback: " + postback);
