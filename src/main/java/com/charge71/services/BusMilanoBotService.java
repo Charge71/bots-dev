@@ -501,6 +501,11 @@ public class BusMilanoBotService {
 		// button3.put("type", "web_url");
 		// button3.put("title", "** SONDAGGIO **");
 		// button3.put("url", "https://goo.gl/forms/6vwaLVtH4NF3S1Aw1");
+		ArrayNode replies = message.putArray("quick_replies");
+		ObjectNode reply = replies.addObject();
+		reply.put("content_type", "text");
+		reply.put("title", "Ripeti " + stopId);
+		reply.put("payload", "stop" + stopId);
 		return response;
 	}
 
@@ -525,11 +530,6 @@ public class BusMilanoBotService {
 			button1.put("title", "orari");
 			button1.put("url", line.get("BookletUrl").asText());
 		}
-		ArrayNode replies = message.putArray("quick_replies");
-		ObjectNode reply = replies.addObject();
-		reply.put("content_type", "text");
-		reply.put("title", "Ripeti " + stopId);
-		reply.put("payload", "stop" + stopId);
 		stopRequested(userId, stopId);
 		return response;
 	}
