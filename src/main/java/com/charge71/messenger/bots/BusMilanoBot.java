@@ -97,6 +97,13 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		log.debug("startup start");
 		{
 			ObjectNode node = JsonNodeFactory.instance.objectNode();
+			node.put("setting_type", "greeting");
+			node.putObject("greeting").put("text",
+					"Ciao {{user_first_name}}! Questo bot fornisce tempi di attesa e orari per le fermate degli autobus di Milano. Clicca su inizia per cominciare!");
+			client.sendSettings(node);
+		}
+		{
+			ObjectNode node = JsonNodeFactory.instance.objectNode();
 			node.put("setting_type", "call_to_actions");
 			node.put("thread_state", "new_thread");
 			ArrayNode array = node.putArray("call_to_actions");
