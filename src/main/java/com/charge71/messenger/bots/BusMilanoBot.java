@@ -15,6 +15,7 @@ import com.charge71.messengerapi.annotations.BotMessage;
 import com.charge71.messengerapi.annotations.BotPostback;
 import com.charge71.messengerapi.annotations.BotStartup;
 import com.charge71.messengerapi.annotations.MessengerBot;
+import com.charge71.model.BusMilanotUser;
 import com.charge71.services.BusMilanoBotService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -80,18 +81,40 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		service.listFavoritesMessenger(client, chatId, userId);
 	}
 
+	@BotPostback("start")
+	public void start(ObjectNode json, String postback) {
+		log.debug("start start");
+		String chatId = json.get("entry").get(0).get("messaging").get(0).get("sender").get("id").asText();
+		String userId = "M" + chatId;
+		BusMilanotUser user = service.createUser(client, userId, chatId);
+		if (user != null) {
+			service.sendWelcomeMessenger(client, user.getFirstName(), chatId);
+		}
+	}
+
 	@BotStartup
 	public void startup() {
 		log.debug("startup start");
-		ObjectNode node = JsonNodeFactory.instance.objectNode();
-		node.put("setting_type", "call_to_actions");
-		node.put("thread_state", "existing_thread");
-		ArrayNode array = node.putArray("call_to_actions");
-		ObjectNode button = array.addObject();
-		button.put("type", "postback");
-		button.put("title", "lista preferite");
-		button.put("payload", "favourites");
-		client.sendSettings(node);
+		{
+			ObjectNode node = JsonNodeFactory.instance.objectNode();
+			node.put("setting_type", "call_to_actions");
+			node.put("thread_state", "new_thread");
+			ArrayNode array = node.putArray("call_to_actions");
+			ObjectNode button = array.addObject();
+			button.put("payload", "start");
+			client.sendSettings(node);
+		}
+		{
+			ObjectNode node = JsonNodeFactory.instance.objectNode();
+			node.put("setting_type", "call_to_actions");
+			node.put("thread_state", "existing_thread");
+			ArrayNode array = node.putArray("call_to_actions");
+			ObjectNode button = array.addObject();
+			button.put("type", "postback");
+			button.put("title", "lista preferite");
+			button.put("payload", "favourites");
+			client.sendSettings(node);
+		}
 	}
 
 	@Override

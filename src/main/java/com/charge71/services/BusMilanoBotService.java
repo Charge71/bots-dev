@@ -60,7 +60,7 @@ public class BusMilanoBotService {
 		}
 	}
 
-	public void createUser(ApiClient client, String userId, String chatId) {
+	public BusMilanotUser createUser(ApiClient client, String userId, String chatId) {
 		if (!mongoTemplate.exists(Query.query(Criteria.where("id").is(userId)), BusMilanotUser.class)) {
 			ObjectNode json = client.getUserInfo(chatId);
 			BusMilanotUser user = new BusMilanotUser();
@@ -68,7 +68,9 @@ public class BusMilanoBotService {
 			user.setFirstName(json.get("first_name").asText());
 			user.setLastName(json.get("last_name").asText());
 			mongoTemplate.save(user);
+			return user;
 		}
+		return null;
 	}
 
 	public void startBot(ApiClient client, String chatId, String userFirstName, String userLastName, String username,
@@ -246,6 +248,12 @@ public class BusMilanoBotService {
 
 	public void sendInfoMessenger(ApiClient client, String chatId) {
 		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
+		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+	}
+
+	public void sendWelcomeMessenger(ApiClient client, String userName, String chatId) {
+		client.sendMessage(chatId, "Ciao " + userName
+				+ "! Per iniziare inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
 		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
 	}
 
