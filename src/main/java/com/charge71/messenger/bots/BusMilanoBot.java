@@ -89,6 +89,8 @@ public class BusMilanoBot extends PlatformApiAware<MessengerRequest, ObjectNode>
 		BusMilanotUser user = service.createUser(client, userId, chatId);
 		if (user != null) {
 			service.sendWelcomeMessenger(client, user.getFirstName(), chatId);
+		} else {
+			client.sendMessage(chatId, "Bentornato!");
 		}
 	}
 
