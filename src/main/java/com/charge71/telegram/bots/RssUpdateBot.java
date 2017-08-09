@@ -186,6 +186,10 @@ public class RssUpdateBot extends PlatformApiAware<TelegramRequest, ObjectNode> 
 	@BotCommand("default")
 	public void def(ObjectNode json, String command) {
 		log.debug("default start");
+		if (!json.hasNonNull("message")) {
+			log.info("No message");
+			return;
+		}
 		String userId = json.get("message").get("from").get("id").asText();
 		String chatId = json.get("message").get("chat").get("id").asText();
 		RssUser user = mongoTemplate.findById(userId, RssUser.class);
