@@ -7,15 +7,15 @@
 		init-method="init">
 		<property name="botClasses">
 			<list>
-				<value>com.charge71.telegram.bots.MeetAroundBot</value>
+				<!--<value>com.charge71.telegram.bots.MeetAroundBot</value>-->
 				<value>com.charge71.telegram.bots.BusMilanoBot</value>
-				<value>com.charge71.telegram.bots.RssUpdateBot</value>
+				<!--<value>com.charge71.telegram.bots.RssUpdateBot</value>-->
 			</list>
 		</property>
 		<property name="baseUrl" value="http://dev-charge71.rhcloud.com"/>
 	</bean>
 	
 	<bean class="com.charge71.services.BusMilanoBotService" init-method="init"/>
-	<bean class="com.charge71.services.RssService" destroy-method="destroy"/>
+	<!--<bean class="com.charge71.services.RssService" destroy-method="destroy"/>-->
 	
 </beans>
