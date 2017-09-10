@@ -11,7 +11,7 @@
 	<context:property-placeholder />
 
 	<mongo:db-factory
-		uri="mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${$MONGODB_SERVICE_HOST}:${MONGODB_SERVICE_PORT}/dev" />
+		uri="mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_SERVICE_HOST}:${MONGODB_SERVICE_PORT}/dev" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
