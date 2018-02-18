@@ -66,7 +66,7 @@ public class TelegramBotDispatcher {
 				beanFactory.autowireBean(bot);
 				if (bot instanceof PlatformApiAware<?, ?>) {
 					((PlatformApiAware<TelegramRequest, ObjectNode>) bot).setClient(new TelegramApiClient(token));
-					((PlatformApiAware<?, ?>) bot).setMessages(new MessageHelper(token));
+					//((PlatformApiAware<?, ?>) bot).setMessages(new MessageHelper(token));
 				}
 				if (bot instanceof AdsProvider) {
 					((AdsProvider) bot).setAdsBaseUrl(baseUrl + "/ads/" + token);

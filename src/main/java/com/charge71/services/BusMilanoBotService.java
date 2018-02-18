@@ -248,13 +248,13 @@ public class BusMilanoBotService {
 
 	public void sendInfoMessenger(ApiClient client, String chatId) {
 		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+		client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 	}
 
 	public void sendWelcomeMessenger(ApiClient client, String userName, String chatId) {
 		client.sendMessage(chatId, "Ciao " + userName
 				+ "! Per iniziare inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
-		client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+		client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 	}
 
 	public void sendInfoTelegram(ApiClient client, String chatId) {
@@ -277,25 +277,25 @@ public class BusMilanoBotService {
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+			client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				client.sendMessage(chatId,
 						"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 				client.sentStructuredMessage(chatId,
-						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+						getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 			} else {
 				log.error("Errore su codice: " + stopId, e);
 				client.sendMessage(chatId,
 						"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
 				client.sentStructuredMessage(chatId,
-						getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+						getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
 			client.sendMessage(chatId,
 					"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-			client.sentStructuredMessage(chatId, getImageMessage("http://dev-charge71.rhcloud.com/static/palina.png"));
+			client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 		}
 	}
 
