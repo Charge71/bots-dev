@@ -19,7 +19,7 @@ public class MessengerApiClient implements ApiClient<MessengerRequest, ObjectNod
 
 	private static final String BASE_URL = "https://graph.facebook.com";
 
-	private static final String VERSION = "v2.6";
+	private static final String VERSION = "v2.7";
 
 	private final String token;
 
