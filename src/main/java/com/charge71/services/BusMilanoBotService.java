@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -86,9 +87,8 @@ public class BusMilanoBotService {
 			user.setUsername(username);
 		}
 		mongoTemplate.save(user);
-		client.sendButton(chatId,
-				"Ciao " + userFirstName
-						+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.",
+		client.sendButton(chatId, "Ciao " + userFirstName
+				+ "! Invia il numero della fermata ATM che ti interessa per ricevere informazioni e tempi di attesa.",
 				"/preferite");
 	}
 
@@ -172,8 +172,8 @@ public class BusMilanoBotService {
 					BusMilanoStop stop = favorites.getStops()[i];
 					buttons.button(BUS_STOP + stop.getId() + " " + stop.getName());
 				}
-				TelegramRequest req = TelegramRequest.sendMessage(chatId)
-						.text("_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)")
+				TelegramRequest req = TelegramRequest.sendMessage(chatId).text(
+						"_Grazie di utilizzare Bus Milano Bot! Supportalo condividendolo con i tuoi amici o lasciando una valutazione a questo_ [link](https://storebot.me/bot/busmilanobot)")
 						.disableWebPagePreview().parseModeMarkdown().keyboard(buttons);
 				try {
 					client.sendRequest(req);
@@ -248,13 +248,15 @@ public class BusMilanoBotService {
 
 	public void sendInfoMessenger(ApiClient client, String chatId) {
 		client.sendMessage(chatId, "Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-		client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+		client.sentStructuredMessage(chatId, getImageMessage(
+				"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 	}
 
 	public void sendWelcomeMessenger(ApiClient client, String userName, String chatId) {
 		client.sendMessage(chatId, "Ciao " + userName
 				+ "! Per iniziare inserisci il codice che vedi sulla palina della fermata, ad esempio 11871.");
-		client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+		client.sentStructuredMessage(chatId, getImageMessage(
+				"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 	}
 
 	public void sendInfoTelegram(ApiClient client, String chatId) {
@@ -277,25 +279,27 @@ public class BusMilanoBotService {
 		} catch (NumberFormatException e) {
 			client.sendMessage(chatId,
 					"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-			client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+			client.sentStructuredMessage(chatId, getImageMessage(
+					"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				client.sendMessage(chatId,
 						"Il codice inserito non è corretto. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-				client.sentStructuredMessage(chatId,
-						getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+				client.sentStructuredMessage(chatId, getImageMessage(
+						"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 			} else {
 				log.error("Errore su codice: " + stopId, e);
 				client.sendMessage(chatId,
 						"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-				client.sentStructuredMessage(chatId,
-						getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+				client.sentStructuredMessage(chatId, getImageMessage(
+						"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 			}
 		} catch (RestClientException e) {
 			log.error("Errore su codice: " + stopId, e);
 			client.sendMessage(chatId,
 					"Errore nell'elaborazione del codice. Inserisci solo il codice che vedi sulla palina della fermata, ad esempio 11871.");
-			client.sentStructuredMessage(chatId, getImageMessage("https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
+			client.sentStructuredMessage(chatId, getImageMessage(
+					"https://bot-dev-bots-dev.a3c1.starter-us-west-1.openshiftapps.com/dev-0.0.1-SNAPSHOT/static/palina.png"));
 		}
 	}
 
@@ -382,7 +386,10 @@ public class BusMilanoBotService {
 	private ObjectNode getInfo(String code) {
 		UriComponentsBuilder builder = UriComponentsBuilder
 				.fromHttpUrl("http://giromilano.atm.it/TPPortalBackEnd/tpl/stops/").path(code).path("/linesummary");
-		return restTemplate.getForObject(builder.build().encode().toUri(), ObjectNode.class);
+		ResponseEntity<ObjectNode> entity = restTemplate.getForEntity(builder.build().encode().toUri(),
+				ObjectNode.class);
+		log.info("ATM response code " + entity.getStatusCode().value());
+		return entity.getBody();
 	}
 
 	// private List<String> getResponseMessage(ObjectNode json, String stopId,
