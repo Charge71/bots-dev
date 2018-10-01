@@ -389,6 +389,7 @@ public class BusMilanoBotService {
 		ResponseEntity<ObjectNode> entity = restTemplate.getForEntity(builder.build().encode().toUri(),
 				ObjectNode.class);
 		log.info("ATM response code " + entity.getStatusCode().value());
+		log.info("ATM response location " + entity.getHeaders().getLocation());
 		return entity.getBody();
 	}
 
