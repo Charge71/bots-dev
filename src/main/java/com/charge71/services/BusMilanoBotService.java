@@ -321,6 +321,7 @@ public class BusMilanoBotService {
 			}
 			Long.parseLong(text);
 			ObjectNode response = getInfo(text);
+			log.info("ATM response " + response);
 			List<TelegramRequest> list = getResponseMessageTelegram(response, chatId, text, userId, adsBaseUrl);
 			for (TelegramRequest message : list) {
 				try {
