@@ -385,7 +385,7 @@ public class BusMilanoBotService {
 
 	private ObjectNode getInfo(String code) {
 		UriComponentsBuilder builder = UriComponentsBuilder
-				.fromHttpUrl("http://giromilano.atm.it/TPPortalBackEnd/tpl/stops/").path(code).path("/linesummary");
+				.fromHttpUrl("https://giromilano.atm.it/TPPortalBackEnd/tpl/stops/").path(code).path("/linesummary");
 		ResponseEntity<ObjectNode> entity = restTemplate.getForEntity(builder.build().encode().toUri(),
 				ObjectNode.class);
 		log.info("ATM response code " + entity.getStatusCode().value());
