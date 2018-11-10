@@ -2,6 +2,7 @@ package com.charge71.messengerapi;
 
 import java.nio.charset.Charset;
 
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MessengerApiClient implements ApiClient<MessengerRequest, ObjectNode> {
+
+	private static final Logger log = Logger.getLogger(MessengerApiClient.class);
 
 	private static final String BASE_URL = "https://graph.facebook.com";
 
@@ -99,6 +102,8 @@ public class MessengerApiClient implements ApiClient<MessengerRequest, ObjectNod
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<String>(objectNode.toString(), headers);
+		log.info("Message url " + builder.build().encode().toUri());
+		log.info("Message body: " + objectNode.toString());
 		return restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.POST, entity, ObjectNode.class)
 				.getBody();
 	}
