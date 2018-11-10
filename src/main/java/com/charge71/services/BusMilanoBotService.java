@@ -541,8 +541,7 @@ public class BusMilanoBotService {
 			ObjectNode element = elements.addObject();
 			element.put("title", "Linea " + lineCode + " " + lineDescription);
 			element.put("subtitle", "Attesa: " + waitMessage);
-			String bookletUrl = line.get("BookletUrl").asText();
-			if (bookletUrl != null) {
+			if (line.hasNonNull("BookletUrl")) {
 				ArrayNode buttons = element.putArray("buttons");
 				ObjectNode button1 = buttons.addObject();
 				button1.put("type", "web_url");
